@@ -1,0 +1,259 @@
+RISC-V
+
+El detalle con las características de esta arquitectura se pueden encontrar en el PPT de la Unidad 0.
+
+Como aditamento, aquí un link que no es del curso con más información sobre la programación en Assembler para 
+esta arquitectura:
+Link: https://www.youtube.com/playlist?list=PLSUmB2yTypWGcPlfTymmaQ3HWxvamxfoW
+
+----------------------------------------------------------------
+
+Còmo escribir un programa en Assembler para arquitectura RISC-V:
+
+En primer lugar, al abrir Ripes siempre hacer click en el iconito de la izquierda arriba de "Select processor" 
+y Elegir 32 bits (los registros almacenaran 32 bits en total)
+ - "Single cycle processor" deseleccionando a su vez las opciones de M y C. Dar "Ok"
+
+En la parte de Source Code es donde se escribirà el programa en Assembler.
+Todos los programas en Assembler que contengan instrucciones deben empezar con:
+.text
+Ya que le estaremos indicando que lo que esta debajo de eso son justamente instrucciones
+
+Para entender los distintos registros e instrucciones, acudir también al PDF de set de instrucciones de RISC-V.
+
+Como referencia, tener en cuenta en en dicho set de isntrucciones para cada tipo de instrucción se 
+muestra el tamaño en bits para cada isntrucción y cómo se divide cada parte para hacer referencia 
+a la operación, registros para almacenar los resultados, registros que actúan como operandos, etc.
+Además, recordar que rd hace referencia al registro donde se almacena una valor, mientras que 
+rs1 y rs2 hacen referencia a los operandos.
+
+***** Registros y valores inmediatos *****
+
+1)
+.text
+    addi t0,x0,128
+
+Esta instrucción lo que hace es tomar el valor inmediato en decimal 128, hace la suma de ese valor con lo 
+que hay en el registro x0 (dicho registro siempre contiene la constante 0), y el resultado se almacena 
+en el registro temporal t0.
+El formato AADI es un tipo de instrucción I, y soporta valores inmediatos de 12 bits signados con rango: {-2048, 2047}
+Esta instrucción es como haber cargado en el registro t0 el inmediato 128.
+
+2)
+.text
+    lui x5,0x12345
+
+Esta instrucción carga en el registro x5 (que es t0, solo que este es otro ejemplo de cómo hacer referencia 
+a ese registro), el valor hexadecimal 0x12345000. En la instrucción no lleva todos los ceros del valor 
+porque este tipo de instrucción (se llama U) contiene 32 bits. Una parte para la operación (lui), otra parte 
+para el registro de destino (x5) y la otra para el valor que se quiere almacenar. Si bien la operación carga 
+en el registro valores de 32 bits, esta intrucción tipo U es de 32 bits, entonces la parte del valor 
+a cargar no puede ser 32 bits tambien. Con lo cual toma solo los 20 bits mas significativos del valor 
+(bits tomando de izquierda a derecha), y el resto lo completa con cero.
+
+***** Operaciones aritméticas *****
+
+1)
+.text
+   li x5,2047
+   addi x5,x5,-1
+
+La primer linea carga un numero inmediato en el registro x5. LI (Load Inmediate) carga un numero cualquier de 32 bits, y ademas 
+es una pseudoinstruccion, con lo cual se traduce como addi x5,x0,2047 en este caso, por el compilador.
+Luego, se decrementa el valor de x5 en uno, y usamos addi justamente porque el -1 es un inmediato 
+y el set de instrucciones para inmediatos siempre llevan "i" al final (ver Set)
+
+2)
+.text
+   li x5,4
+   sub x4,x0,x5
+
+La primer linea carga en el registro x5 el inmediato 4.
+Luego la operacion sub que es para restar, forma parte de las instrucciones de formato tipo R, que son 
+justamente para trabajar con operandos (registros) pero no con valores inmediatos.
+La segunda linea guarda en x4 la resta entre x0 (que es siempre 0 por defecto y constante) y x5. Es decir, 
+guarda -4 (recordar que siempre están en Complemento a la base).
+
+***** Accesos a memoria de datos *****
+
+RISC-V se maneja con datos ya inicializados en memoria. Es decir, no podemos usar variables que solo esten declaradas pero no inicializadas.
+Cuando queremos declarar una variable e inicializarla en memoria en RISC-V, se hace asi por ej:
+.data -> para indicar variable en memoria inicializada
+   var1: .word 4 -> el nombre de la variable es var1, el valor que contiene es 4, y el tamaño en memoria es de una palabra (de ahi el .word)
+
+Para establecer el tamaño de la variable, tenemos tres posibilidades:
+.word -> ocupa una palabra entera (en el caso de RISC-V, son de 32 bits, es decir de 4 bytes)
+.halfword -> ocupa la mitad de una palabra (16 bits, es decir 2 bytes)
+.byte -> ocupa solo 1 byte
+
+Ejemplo completo de uso:
+
+1)
+.data
+   var1: .word 4
+
+.text
+   la x5, var1 #la es Load Adress, carga la direccion de memoria de var1 en el registro x5
+   lw x6, 0(x5) #lw es Load Word, carga el valor de 32 bits almacenado en la direccion a la que apunta x5 en x6. El 0 es el desplazamiento (en este caso ninguno)
+   addi x6, x6, 1 #incrementa el valor del registro x6 en 1
+   sw x6, 0(x5) #sw es Store Word, guarda la palabra contenida en el registro x6 en la posicion de memoria apuntada por x5, sin desplazarse
+
+
+2)
+.data
+   indice: .word 3
+   vector: .word 32,64,512,1024,2048
+
+.text
+   la x5, vector
+   la x6, indice
+   lw, x6, 0(x6)
+   slli x6, x6, 2
+   add x7, x6, x5
+   lw x4, 0(x7)
+
+Veremos que hace esto linea a linea:
+- Parte de data:
+indice es una variable que ocupa 4 bytes y contiene el valor 3
+vector es una variable pero que no contiene un unico valor sino una serie de valores ubicados en espacios consecutivos de memoria, es decir, 
+justamente es un vector. Cada elemento del vector ocupa un word, una palabra o sea 4 bytes.
+
+- Parte de text (instrucciones):
+la x5, vector -> carga la DIRECCION de memoria del primer elemento del vector (NO el contenido en si, sino la direccion)
+la x6, indice -> carga la direccion de memoria de la variable indice
+lw, x6, 0(x6) -> carga el contenido de la direccion de memoria apuntada por x6 en x6
+slli x6, x6, 2 -> realiza un desplazamiento a izquierda para acceder a la posicion indicada por la variable indice
+Es decir, indice tiene el valor 3, o sea que queremos acceder al elemento de la posicion 3 del vector (que es 1024).
+Como cada elemento del vector ocupa una palabra (32 bits, 4 bytes), podemos decir que cada elemento ocupa 4 direcciones de memoria.
+Para acceder al elemento de la posicion 3 (que seria el 4to elemento) del vector, tenemos que atravesar las 4 posiciones del primer elemento, 
+las 4 del segundo y las 4 del tercero para llegar al comienzo del 4to elemento.
+Entonces: 4 + 4 + 4 = 12
+Nos tenemos que mover 12 bytes para llegar al primer byte del 4to elemento del vector
+Entonces ese 3 del indice lo tenemos que multiplciar por 4 para obtener el 12 del desplazamiento. Pero en RISC-V no hay multiplicacion, por lo cual 
+nos valemos del uso de slli que es un desplazamiento que lo que hace en cierta forma es una multiplicacion, sin llegar a serlo.
+El 2 debemos interpretarlo como que 3 se multiplica por 2 a la 2. O sea 3 * 2 a la 2 = 12
+add x7, x6, x5 -> guardamos en el registro x7 la direccion que resulta de sumar la direccion almacenada en x5 con el desplazamiento almacenado en x6
+lw x4, 0(x7) -> almacenamos en el registro x4 lo que se encuentra en la direccion de memoria apuntada por x7, sin desplazamiento
+
+***** ECALL *****
+
+RISC-V no posee instrucciones tales como printf, etc de C predefinidas para ejecutar acciones con el sist operativo por ej.
+Pero tiene las simulaciones a funciones como esas, que son las llamadas ECALL.
+
+Para ejecutar una ECALL en RISC-V, debemos tener en cuenta 3 cosas:
+- Fijarnos en Ripes -> Help -> System calls. Ahi veremos el listado de llamadas a funciones simuladas, junto con el numero que le corresponde a cada funcion
+- Si queremos por ej mostrar un valor por consola, dicho valor se almacena en el registro a0 de RISC-V
+- El numero correspondiente a la funcion simulada que queremos ejecutar lo almacenamos en el registro a7 de RISC-V
+
+Por ejemplo:
+1)
+.data
+   texto: .string "Hola mundo!"
+   numero: .word -10
+
+.text
+   la a0, texto
+   li a7, 4
+   ecall
+
+  la a0, numero
+  lw a0, 0(a0)
+  li a7, 1
+  ecall
+
+En el primer grupo de instrucciones se quiere imprimir por consola un texto, cuya funcion simulada que ejecuta tal accion esta codificada con el numero 4.
+Como texto es un string, o sea un vector de char, en a0 se carga la primera posicion de memoria del primer elemento de dicho vector.
+Con ecall finalmente se ejecuta la funcion simulada
+En el segundo grupo se hace algo similar, pero imprimiendo un numero por consola.
+
+
+***** Saltos Condicionales *****
+
+Los saltos condicionales siguen una idea similar justamente a la de los condicionales de los lenguajes de alto nivel. Es decir, evaluar una condicion, 
+si la condicion se cumple ejecutar algo y sino ejecutar nad au otra cosa.
+En este caso los saltos condicionales ademas de evaluar una condicion y ejecutar algo, se basan en lo que se conoce como codigo spaghetti, es decir, 
+codigos que hacen referencias a porciones de instrucciones que pueden estar mas arriba o mas abajo y que a veces puede causar cierta confusion por 
+esto mismo (esta acotacion del codigo spaghetti la añadi yo, solo para tener una nocion).
+
+Ejemplo:
+1)
+.data
+   vector: .word 100,200,200,-10,400
+
+.text
+   la x5, vector
+   li a7, 1
+
+loop:
+   lw a0, 0(x5)
+   ecall
+   addi x5, x5, 4
+   bge a0, x0, loop
+   nop
+
+Desglosemos cada parte:
+- Parte data:
+se define e inicaliza una variable tipo vector cuyos elementos ocupan una palabra (32 bits, 4 bytes) cada uno
+
+- Parte text (instrucciones):
+la x5, vector -> carga en el registro x5 la direccion del primer byte del primer elemento del vector
+li a7, 1 -> carga eb el registro a7 el inmediato 1 que hace referencia a una funcion simulada a ejecutar luego con ecall
+loop: -> esto es una etiqueta. Una etiqueta es un nombre identificativo para un conjunto de instrucciones de forma tal que si necesito ejecutar dichas 
+instrucciones en otra parte del programa, podre hacerlo referenciandolas a traves de la etiqueta que las contiene (como si fueran nombres de funciones)
+
+- Instrucciones de "loop":
+lw a0, 0(x5) -> carga en el registro a0 la palabra que contiene la direccion de memoria a la que apunta el registro x5
+ecall -> ejecuta la funcion simulada a la que hace referencia el registro a7
+addi x5, x5, 4 -> se suma 4 a lo que contiene x5, que es la direccion de memoria del primer byte del primer elemento del vector.
+De esta manera pasa al primer byte del segundo elemento
+bge a0, x0, loop -> aqui se realiza la evaluacion de la condicion. bge significa "branch if rs1 is greater than or equal to rs2", es decir que debe ejecutar 
+algo si el operando 1 (a0 en este caso) es mayor o igual al operando 2 (x0, es decir 0). Y lo que debe ejecutar en caso de que la condicion se cumpla 
+es "loop" otra vez. D elo contrario pasará a la siguiente instrucción que es nop (se puso por poner algo).
+O sea que este programa en particular imprimirá por consola los numeros del vector que sean mayores o iguales a cero y se detendrà cuando encuentre 
+el primer numero negativo (aunque en este caso lo imprimira antes).
+
+***** Subrutinas (funciones) *****
+
+Las subrutinas no son otra cosa que un segmento de codigo/conjunto de instrucciones al cual le colocamos una etiqueta para reconocerlo 
+y llamarlo/invocarlo para ejecutarlo.
+Una vez ejecutado, el PC (Program Counter) volvera al lugar inicial desde el cual llamo a la subrutina. Decimos esto ultimo porque para llamar a una 
+subrutina el PC debe moverse para atras (si la subrutina esta mas arriba) o para adelante (si la subrutina esta mas abajo) para ubicarse en el lugar 
+donde comienza el codigo/instrucciones de la subrutina.
+El ejemplo anterior del salto condicional claramente usa una subrutina.
+Ahora veamos otro ejemplo:
+
+1)
+.text
+   li a0, 100
+   li a1, 50
+   jal x1, MIN #jal -> jump and link
+   nop
+
+fin:
+   beq x0, x0, fin
+
+MIN:
+   blt a0, a1, volver
+   addi a0, a1, 0
+
+volver:
+   jarl x0, x1, 0 #ret
+
+En este ejemplo tenemos varias subrutinas.
+Analicemos cada parte:
+li a0, 100 -> almacena en a0 el inmediato 100
+li a1, 50 -> almacena en a1 el inmediato 50
+jal x1, MIN -> indica que se salte a ejecutar lo que contiene la etiqueta MIN, pero guardando previamente la ubicacion actual del PC para regresar despues
+
+Subrutina MIN:
+blt a0, a1, volver -> branch less than. evalua si lo que contiene a0 es menor que lo que contiene a1. si es asi, se ejecuta la subrutina vovler
+addi a0, a1, 0 -> si la evaluacion anterior dio falso, se guarda en a0 lo que contiene a1
+
+Subrutina volver:
+jarl x0, x1, 0 #ret -> jump and return link es para retornar el PC a la posicion que quedo almacenada en x1. Otra alternativa a esta instruccion seria 
+utilizar la pseudoinstruccion "ret"
+
+Subrutina fin:
+beq x0, x0, fin -> branch equal. verifica si los operandos son iguales. en este caso lo son, asi que se ejecutara fin infinitamente como en un loop
+
+Las subrutinas y los registros que se usan para ellas siguen una serie de convenciones, que se encuentran en una de las diapositivas del PPT.
