@@ -1,0 +1,7 @@
+La ALU (unidad aritmético lógica dentro del CPU), es la encargada de llevar a cabo operaciones a dos operando que ingresan como entradas (bits) y devuelve un resultado.
+
+En los ejemplos de las primeras capturas, se utiliza un sistema binario de 4 bits para facilitar las explicaciones y la representación en pantalla de las formas de representación de los números en la computadora.
+
+Tener en cuenta que el sistema de representación que utiliza la computadora para representar números signados y realizar operaciones con ellos es el de complemento a la base. Complemento a la base toma el bit más significativo para el signo (0 positivo, 1 negativo), y solo en el caso de los números negativos, aplica el complemento a la base (ver apuntes a mano como se aplica)
+
+La ALU también realiza desplazamientos. Y también comparaciones lógicas (AND y OR bitwise)

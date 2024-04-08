@@ -1,0 +1,18 @@
+Unidad 1.2 parte 3
+
+Los switches son aquellos dispositivos que permiten o no el paso de la corriente. 
+Los switches mecánicos son aquellos que vendrían a ser como interruptores o pulsadores y los hay normal abierto (si se pulsan permiten el paso de la corriente) o normal cerrado (si se pulsan no permiten el paso de la corriente). Un ejemplo son los revés que se utilizaban en las primeras computadoras.
+
+Hoy en día tenemos los switches de estado sólido, que son los transistores que, recordemos, son semiconductores.
+Contienen 3 terminales (Gate - Source- Drain). Los transitores van a permitir o no el paso de la corriente según la tensión que ingrese por el terminal "Gate".
+
+Estos switches que dejan pasar o no la corriente, los podemos diagramas en papel como compuertas lógicas (ver compuertas AND, OR, NOT, etc). Las mismas reciben una o más valores de entrada (0 -> no hay corriente, 1 -> hay corriente) y devuelve un valor de salida. Con esto pasamos de lo real que son las resistencias, cables, voltajes, etc, a lo abstracto representado por estos elementos.
+
+Tener como referencia VDD (voltaje de la fuente de alimentación)
+
+Respecto de las capturas, tener en cuenta lo siguiente para cada circuito. En este caso, la salida 0 de fx de los circuitos de ejemplo, el 0 hace referencia que la conexión o la corriente llega al punto de origen/masa. Pero si es un 1 la salida de esas funciones, es porque alguna de esas compuertas (que no son otra cosa que los switches), no permitió el paso de la corriente para que la misma vuelva al origen/masa (sería el triangulito del final en cada circuito, o sea la parte negativa que se vio en los circuitos cerrados en la parte d ella fuente de alimentación).
+
+Info complementaria de CMOS, PMOS, y NMOS: 
+https://www.youtube.com/watch?v=docgmTprR5o
+
+Los circuitos integrados son chips que contienen varias compuertas lógicas dentro de sí. Las compuertas suelen ser del mismo estilo. Tiene que estar conectados a una fuente de alimentación y a una masa.

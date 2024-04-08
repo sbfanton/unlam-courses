@@ -1,0 +1,35 @@
+Unidad 1.1 - Parte 3
+
+Aclaración: recordar que diferencia de potencial es el voltaje/volts que aporta la fuente de alimentación.
+
+Luego de la Ley de Ohm apareció la ley de las tensiones de Kirchoff. 
+Dice que la energía en un circuito se conserva. Esto indica que si nosotros partimos de un punto en el circuito y hacemos un recorrido a lo largo del circuito y volvemos al mismo punto, la diferencia de potencial debe ser cero. O sea, si partimos de un punto, hacemos el recorrido y volvemos al mismo punto inicial, debe seguir habiendo el mismo nivel de tensión. Este recorrido en bucle se llama malla.
+
+Viendo el caso de la imagen 1 de las capturas, esto vendría a ser así:
+Si partimos de un punto Va que está antes de la fuente de alimentación, la diferencia de potencial (el voltaje que aporta dicha fuente) es cero. Cuando pasa del otro lado de la fuente de alimentación, pasando primero por el polo negativo y luego por el positivo, este último aporta/suma volts, y suponiendo que tiene 10 volts y siendo el positivo por donde sale la corriente, quiere decir que ahora hay una diferencia de 10 volts, dado que se sumaron, se agregaron. Cuando la corriente llega a la resistencia (tener en cuenta que la resistencia no tiene polaridad positiva y negativa, los terminales da igual cómo se conecten), dicha resistencia es lo contrario a la corriente. Teniendo en cuenta que en este ejemplo la corriente primero sale del polo positivo de la fuente, llega al terminal positivo de la resistencia y luego sale de la terminal negativa, esta entonces resta el voltaje, resta esos 10 volts, y cuando se vuelve al punto inicial Va, la diferencia de potencial es cero, que es lo que dice esta ley.
+
+V1 - 1i x R1 = 0
+
+V1: voltaje de la fuente
+1i: amperes del cable/corriente
+R1: Ohms de la resistencia
+
+Según esto: 
+V1 = 1i x R1, lo que coincide con la Ley de Ohms
+
+Esta idea se aplica también para el caso de un circuito con resistencia en serie (varias resistencias una detrás de la otra).
+En resistencias en serie, el valor de la resistencia total del circuito se obtiene:
+Req = R1 + R2 + Rn
+En resistencias en paralelo (se arman con nodos, a los que se aplica la ley de conservación de la carga eléctrica de abajo), el valor de la resistencia total del circuito se obtiene:
+Req = 1 / ((1/R1) + (1/R2) + ... + (1/Rn))
+
+Otra ley es la de conservación de la carga eléctrica, también de Kirchoff.
+La misma indica que si hay un nodo en un cable (corriente) que une dos o más cables, la energía que entra a ese nodo (los amperes de los cables que entran), tiene que ser igual a la energía de los cables que salen de él
+
+
+Otra acotación más:
+La resistencia total de un circuito cuando hay varias resistencias involucradas (llamémosle resistencia equivalente al total), es diferente en cada caso.
+En el caso de circuitos con resistencias en serie (una detrás de la otra), la resistencia equivalente será mayor a la mayor de dichas resistencias.
+En cambio, en el caso de circuitos con resistencias en paralelo (una paralela a la otra), la resistencia equivalente será menor que la menor de las resistencias de dicho circuito.
+
+

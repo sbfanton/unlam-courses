@@ -1,0 +1,28 @@
+Fundamentos de sistemas embebidos
+
+Unidad 1.1 - Parte 1
+
+Volta fue quien desarrolló la primer pila capaz de proveer energía eléctrica de manera constante (corriente continua), ya que antes solo se conocía la electricidad/corriente estática, que es cuando una materia está cargada eléctricamente (tiene más electrones que en su estado natural). Y dicha electricidad estática perdía su carga, por ej, al tocar el material, produciendo la descarga.
+La pila de Volta proveía una diferencia de potencial. Es decir, aportaba la energía para que en un circuito la corriente pueda circular de manera constante.
+Punto de potencial positivo (Vcc) -> energía positiva
+Punto de potencial negativo (masa) -> energía negativa
+La unidad usada como medida en las fuentes de alimentación es el Volt.
+Las fuentes de tensión que proveen corriente continua tiene un límite máximo de voltaje que puede circular por ellos. Si se supera dicho límite, el aparato/la fuente de alimentación se quema.
+Los cables son los que permiten conectar los distintos componentes de un circuito, conectando por ejemplo fuentes de alimentación y tensión entre sí. La corriente que circula en los cables se mide en amperes.
+Las resistencias, por otra parte, sirven para oponerse al paso de la corriente y disminuirla. La resistividad es medida en Ohms.
+
+Entonces, de manera resumida, tenemos tres elementos iniciales para armar un circuito:
+- 1 fuente de alimentación que provee energía y trabaja en volts
+- el cable por el que circula la energía/corriente que trabaja en amperes. En los dibujos de los circuitos, además, se simboliza con una flecha del sentido en que circula la corriente.
+- Resistencia que trabaja en Ohms.
+
+La fuente de alimentación tiene su terminal positiva y negativa. La corriente circula desde la terminal negativa hacia la positiva, en el mundo real (de ahí se le diga sentido real). Hay un sentido convencional, que históricamente consideraba que la corriente circulaba desde el positivo al negativo, de allí que los dibujos de los circuitos aparezcan representados de esta manera. Sin embargo, la matemática aplica de la misma manera para ambos casos.
+
+Ley de Ohm
+Si a una determinada fuente de tensión nosotros le conectamos una resistencia, va a aparecer una corriente. El valor de dicha corriente va a depender del valor de la fuente de alimentación y la resistencia.
+En nuestros modelos iniciales, vamos a considerar que el valor de la tensión (volts - V), corriente (amperes - I) y resistencia (ohms - R) son constantes para las prácticas, pero en el mundo real tener en cuenta que esto no ocurre ya que por ej, una pila, se va desgastando y su tensión disminuye con el tiempo.
+Fórmula: 
+V = I x R
+volts = amperes x ohms
+
+

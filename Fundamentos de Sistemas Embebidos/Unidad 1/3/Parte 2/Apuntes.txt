@@ -1,0 +1,11 @@
+Los parámetros estáticos de las compuertas son los referidos a:
+- Qué valor de tensión admite
+- Qué valor de corriente admite
+- Qué rangos de LOW y HIGH manejará
+entre otros
+
+Dichos parámetros suelen venir en la hoja de datos de los circuitos integrados que compramos en una tabla
+
+fan-out es la cantidad de cables (entradas nuevas) que se pueden conectar a una salida de una compuerta
+
+También hay parámetros dinámicos, que son los que dependen del tiempo (ver tiempo de propagación)

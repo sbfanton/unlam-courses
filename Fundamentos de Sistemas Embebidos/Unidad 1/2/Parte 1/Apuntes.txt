@@ -1,0 +1,17 @@
+Unidad 1.2 parte 1
+
+En este caso se habla un poco de los semiconductores, que no son los cables propiamente dichos como vimos hasta ahora que son conductores que permiten el paso de la corriente, sino materiales que lo permiten en forma parcial.
+EL modelo de bandas dice que si se juntan átomos de un material, se forman moléculas, y si la cantidad de moléculas es lo suficientemente grande, se forma un sólido, por ejemplo, los átomos y moléculas de un cobre para armar el cable. En estos casos, hay tanta cantidad de electrones que los mismos ya no se pueden "contar", por lo cual es como que se separan en grupos o niveles de energía llamadas "bandas". La banda con mayor energía se la conoce como banda de conducción, y la banda con menor energía se llama banda de valencia.
+La separación entre las bandas es la que indica qué tan buen conductor es el material (cuanto más grande es la separación, pero conductor de corriente es el material).
+Ejemplos de semiconductores: silicio, germanio.
+Los semiconductores serían el término medio entre los conductores (ideales para el paso de la corriente) y los aislantes (que dificultan el paso de la corriente).
+
+Tenemos dos tipos de semiconductores: diodos y transistores
+
+Diodos:
+Un diodo tiene una terminal positiva (ánodo) y una negativa (cátodo). Permite la circulación de corriente siempre que la tensión sea mayor en el ánodo que en el cátodo (polarización en directa). Si ocurre el caso inverse, impide la circulación de la corriente (polarización en inversa).
+Funciona de la siguiente manera:
+Suponiendo que tenemos una fuente de alimentación, luego un diodo y luego una resistencia en un circuito. SI la fuente de alimentación tiene menos de 0.7 volts, está por debajo del umbral del diodo (diodo de silicio), así que el mismo no permitiría el paso de la corriente. Si la fuente tiene por ej 1V, entonces la corriente pasa por el diodo y dicho diodo le resta 0.7V. Finalmente, en la resistencia terminarían de caer los 0.3V restantes para llegar al cero cuando retorna al punto de origen. Esto en el caso de la polarización directa.
+
+Sería:
+V1 - D1 - R1xI1 = 0

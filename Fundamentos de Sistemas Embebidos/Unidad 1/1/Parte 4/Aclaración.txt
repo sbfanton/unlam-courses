@@ -1,0 +1,9 @@
+En este caso, se plantean 3 ejemplos de cómo hallar datos faltantes en los circuitos. Con datos faltantes nos referimos a encontrar los amperes, el voltaje o los ohms, según el caso. En los ejemplos se nos aportan los datos de los voltajes de las fuentes de alimentación junto con los datos de los ohms de las resistencias, motivo por el cual debemos encontrar los valores I de las corrientes de los cables, en amperes.
+En los tres casos, hay circuitos más complejos, algunos con más de una fuente de alimentación, pero en todos ellos se plantea para resolver las ecuaciones con las incógnitas i la aplicación de la ley de Ohm y de Kirchoff.
+Basta con remitirse a ellas para entender los ejemplos, pero básicamente recordemos que son:
+
+V = R x I
+
+En un circuito simple en malla o bucle con una fuente de alimentación y una resistencia:
+V1 - R1 x I1 = 0
+Siendo V1 el voltaje de la fuente, R1 los ohms de la resistencia e I1 la corriente en amperes del cable

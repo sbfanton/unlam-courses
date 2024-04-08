@@ -1,0 +1,25 @@
+Unidad 1.2 parte 2
+
+El tipo de energía que nos llega a nuestros hogares no es corriente continua, que es la que vimos hasta ahora, sino la corriente alterna de 220V.
+Veremos cómo se convierte la corriente alterna en continua.
+Potencia -> P
+P = I x V (la potencia es el producto entre la tensión V y la corriente I)
+Tener en cuenta que si se aumenta la tensión, la corriente deberá ser menor para mantener esta relación. Esto se logra, por ej, usando cables de menor diámetro para disminuir la corriente que circula por ellos.
+Los transformadores son los que aumentan o disminuyen el nivel de tensión. Existen varios transformadores a lo largo del camino que recorre la electricidad desde la planta generadora hasta nuestras casas, unos aumentando y otros disminuyendo.
+Si quisiéramos pasar una corriente alterna, que es la que llega  nuestras casas con aproximadamente 220V, a una continua para usar en un circuito que armamos nosotros en una mesa, tener en cuenta que estos últimos trabajan a 12V, 9V, 5V, por ejemplo, con lo cual los 220V son una barbaridad. Entonces, en este caso, para disminuir la tensión se utiliza un transformador, siendo el lado primario del mismo el que recibirá la mayor tensión, y la corriente saldrá por el lado secundario con menor tensión. Pero OJO, esto aún sigue siendo corriente alterna. Para convertirla en corriente continua (ver diferencia entre alterna y continua en gráficos de las capturas, la alterna es la sinuosa que toma valores negativos y positivos y la continua solo toma uno de esos valores), debemos utilizar diodos, aunque esto es solo una parte de esa conversión.
+Más precisamente se utilizará un puente de diodos, que sirve para rectificar el hemiciclo positivo y negativo de la corriente alterna, (que aún NO se convirtió en corriente continua). Simplemente con esto se quitaron los valores negativos de la corriente alterna o en otras palabras el camino partiendo del lado negativo de la fuente.
+El siguiente paso sería agregar un capacitor a la salida del puente de diodos, que es lo que intentar mantener un valor constante en la tensión (va disminuyendo o aumentando todavía como en la alterna pero lo hace de manera muchísimo menos sinuosa, lo que hace que se vaya pareciendo a una corriente continua).
+Finalmente, la última parte sería agregar un regulador lineal, que es un semiconductor que recibe una cantidad de tensión y la disminuye en la salida, disipando dicha energía en forma de calor, por eso suelen venir incluidos disipadores. Con esto ya tendríamos una corriente continua, que previamente fue una corriente alterna.
+
+En resumen:
+1) Corriente alterna 
+2) Transformador para reducir tensión 
+3) Puente de diodos para rectificar semiciclos de la corriente alterna 
+4) Capacitor/es para alcanzar un valor más contante de tensión
+5) Regulador lineal para reducir tensión y terminar de rectificar corriente
+
+De todas formas, las computadoras hoy en día utilizan otro mecanismo para transformar corriente alterna en corriente continua para los circuitos, que es con una fuente de alimentación swtiching, más óptima, dinámica e inteligente.
+
+Con lo cual tenemos entonces la fuente lineal antes vista y la switching (a título informativo fue todo esto).
+
+Si vemos la etiqueta de la fuente de cualquier computadora, veremos que hay datos que indican qué nivel de tensión aceptan de entrada, por ej 240V (bajo la leyenda "INPUT" por lo general, con el símbolo de la curvita indicando que es corriente alterna). Y a su vez bajo una leyenda por ej "OUTPUT" nos indica la tensión de salida que devuelve esa fuente para trabajar internamente loc circuitos de la computadora (ej, 12V por nombrar uno, junto con el símbolo de corriente continua).

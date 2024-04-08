@@ -1,0 +1,8 @@
+Unidad 1.3 parte 1
+
+En la lógica binaria, si bien usamos 1 y 0 para representar paso de la corriente o no, lo cierto es que no existe en la realidad que no pase nada de corriente o un valor que sea por ej 1V para representar el 1 en el paso de la corriente. Pueden haber distintos valores de corriente y lo que se debe hacer es establecer rangos o tolerancias para considerar determinados valores como 0 o low, y otros como 1 o high.
+Por ejemplo, tomar valores entre 3V y 5V como alto o 1, y tomar los valores entre 0V y 1V como low (por decir algo). Y los valores entre 1V y 3V que no están asignados en ningún rango, el circuito lo puede llegar a tomar como 0 o 1, y por ese motivo se debe evitar en lo posible que se llegue a pasar esa corriente.
+Así, siguiendo este ejemplo, si el voltaje que pasó por el circuito fue de 4.5V, como lo considero como 1, entonces en un sistema computacional eso transmitiría 1 bit. Por otro lado, si hubo un voltaje de 0.5V, está dentro del rango que considero como LOW o 0, entonces se pasó 0 bit.
+
+Las formas de onda digitales estudian cómo varía la tensión en función del tiempo. Se analiza gráficamente, en el eje x el tiempo y en el eje Y se coloca HIGH y LOW para saber cómo fue variando dicha corriente, en qué momento llegó al HIGH o LOW, y cuánto tardó en retornar a como estaba antes.
+Tener en cuenta que la tensión no pasa instantáneamente de LOW a HIGH o de HIGH a LOW, sino que le puede tomar un cierto tiempo parar de un voltaje a otro.
