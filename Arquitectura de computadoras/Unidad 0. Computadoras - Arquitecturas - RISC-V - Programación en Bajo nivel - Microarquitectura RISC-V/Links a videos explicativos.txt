@@ -1,0 +1,16 @@
+Links a videos explicativos
+
+0.1 - Arquitectura de computadoras
+https://www.youtube.com/playlist?list=PLzX6Q2I9xC58qg2L1BENTkCkyzROuFmSm
+
+0.2 - Arquitectura RISC-V y ASM
+https://www.youtube.com/playlist?list=PLzX6Q2I9xC5-0Z46l8U67sF_75JieZZqU
+
+0.3 - Lenguajes de Programacion
+https://www.youtube.com/playlist?list=PLzX6Q2I9xC58chhxrjjc5xWRcd8qopsJH
+
+0.4 - Microarquitectura
+https://www.youtube.com/playlist?list=PLzX6Q2I9xC5-EJvzqICrw-EJVCJ5EYS0_0.
+
+0.5 - Eficiencia y Pipelining
+https://www.youtube.com/playlist?list=PLzX6Q2I9xC59zi2vQez6zgWlE-G8EP5cz

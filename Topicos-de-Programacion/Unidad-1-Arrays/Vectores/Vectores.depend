@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1681774110 source:c:\users\sol\documents\programacion (varios)\c\tps\topicos-de-programacion\unidad-1-arrays\vectores\vectores.c
+	"vectores.h"
+
+1681772624 c:\users\sol\documents\programacion (varios)\c\tps\topicos-de-programacion\unidad-1-arrays\vectores\vectores.h
+	<stdio.h>
+
+1681773805 source:c:\users\sol\documents\programacion (varios)\c\tps\topicos-de-programacion\unidad-1-arrays\vectores\main.c
+	<stdio.h>
+	<stdlib.h>
+	"vectores.h"
+

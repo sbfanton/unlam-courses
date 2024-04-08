@@ -1,0 +1,22 @@
+# depslib dependency file v1.0
+1681083974 source:c:\users\sol\documents\programacion (varios)\c\tps\tp1_parte1\main.c
+	<stdio.h>
+	<stdlib.h>
+	"matematica.h"
+
+1681083630 c:\users\sol\documents\programacion (varios)\c\tps\tp1_parte1\matematica.h
+	<math.h>
+	<stdlib.h>
+
+1680811084 source:c:\users\sol\documents\programacion (varios)\c\tps\tp1_parte1\matematica.c
+	"matematica.h"
+	<stdio.h>
+
+1681084289 source:c:\users\sol\documents\programacion (varios)\c\tps\ejercicios-de-repaso\matematica.c
+	"matematica.h"
+	<stdio.h>
+
+1681083630 c:\users\sol\documents\programacion (varios)\c\tps\ejercicios-de-repaso\matematica.h
+	<math.h>
+	<stdlib.h>
+
