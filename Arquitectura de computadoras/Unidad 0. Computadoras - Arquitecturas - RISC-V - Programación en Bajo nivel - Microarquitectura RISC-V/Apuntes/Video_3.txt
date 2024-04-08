@@ -1,0 +1,32 @@
+Video 3:
+
+Existen dos modelos de construcción de CPU: la micro programada y la tableada.
+
+La CPU micro programada, que es más antigua, fue popular en los 70 y 80, y permitía incrementar la cantidad de instrucciones que podía acumular la CPU, lo que le daba un valor extra a su funcionalidad.
+Primero decodifica una instrucción que proviene de la memoria principal y luego ejecuta una secuencia de control, es decir, una secuencia de pasos que es siempre fija y va a encargarse de resolver esa instrucción. Esa secuencia en particular va a estar implementada en lo que se conoce como un micrgoprograma dentro del secuenciador.
+Si la instrucción a resolver es una suma, el secuenciador llamará al bloque del sumador, si es una resta, al retador, y así.
+
+Hay un ejemplo de cómo funciona una secuencia dentro de este tipo de CPU. En el PPT está lo del video, pero igual acá se deja constancia de algunas referencias y explicaciones del dibujo.
+El bloque MBR es el que recibe del bus de datos los datos que provienen de la memoria principal (no se entra en detalle de cómo se accede a dichos datos).
+Hay dos registros Latch R0 y R1, que estarán compuestos cada uno de ellos por n FF D OE, y servirán para almacenar datos.
+La ALU es simple en este caso, solo soporta dos operaciones: suma de entradas A + B o bien suma de entrada A + 0. 
+Si se realiza una u otra suma eso lo indica la señal OP (0 -> A + B, 1 -> A + 0).
+El bloque RTR almacena temporalmente el resultado que se obtiene de la ALU. 
+Y finalmente todo esto se halla conectado entre sí mediante el bus interno de datos.
+El bus interno de datos puede recibir datos únicamente del MBR o bien del RTR. Solo estos dos pueden escribir en este bus. Por otro lado, el bus puede ser leído por el registro R0, el registro R1 (estos dos según el valor de la señal CE) y también es constantemente leído sin impedimento por la entrada B de la ALU. 
+Se debe tener en cuenta que el MBR y el RTR NO pueden escribir o enviar datos ambos al mismo tiempo en el bus, porque eso produciría una colisión y un corto. Deben turnarse para poder escribir, y eso se maneja con la señal OE de cada uno.
+Por otro lado, una situación similar ocurre con el bus interno que conecta la entrada A de la ALU con los registros R0 y R1. NO pueden ambos registros escribir en el bus que los une con A al mismo tiempo, es decir, la señal OE no puede estar en 1 en ambos a la vez. Deben turnarse.
+Se plantea un ejemplo de resolución que es: R0 = R0 + MBR
+Es decir, tomar el valor que tiene R0 y el de MBR, sumarlos y guardar ese valor en R0.
+En el ejemplo, si R0 tiene un valor de 2 y MBR de 4, el resultado que se almacenará al final en R0 es 6.
+Para hacer esto se irán llevando a cabo una serie de pasos, llamados ciclos (en el ejemplo están numerados como ciclo 000, el siguiente es 001, y así). En cada ciclo, las señales vistas (OP, CE, OE) irán cambiando en función de cómo se deban ir moviendo los datos para completar ese objetivo final.
+Por otra parte, cada ciclo está atado al oscilador por ej del flanco ascendente y la eficiencia/velocidad con que trabaja la CPU. Respecto al flanco ascendente, lo que indicamos es que cada vez que se produzca un nuevo flanco ascendente, se inicia un nuevo ciclo.
+Analicemos cada ciclo del ejemplo (ver el dibujo al mismo tiempo):
+- 000: en este ciclo, se habilita que lo que contiene MBR y R0 se envíen por los buses de datos hacia las entrada B y A de la ALU respectivamente. OE de MBR y R0 están en 1, todas las demás señales en 0, incluso OP ya que 0 indica A + B en este caso.
+- 001: En este ciclo se mantiene OE de MBR y R0 en 1 para que se mantengan esos valores en la ALU y no entren otros haciendo que lleve a cabo otra operación. Lo çunico que se cambia es la señal CE del RTR para almacenar el resultado de salida de la ALU.
+- 010: se habilita la señal OE de RTR para que envíe el resultado por el bus de datos interno, deshabitando OE de MBR (al mismo tiempo o bien creando un ciclo intermedio antes), OE de R0 a la ALU y CE de RTR que recibió antes el resultado de la ALU.
+- 011: se habilita la señal CE de R0 para recibir el valor que envía RTR de la suma por el bus de datos, pero sin deshabitar aún la señal OE de RTR para que se mantenga conectada al bus enviando el resultado hasta estar seguros de que ingrese a R0.
+- 100: almacenado ya el valor de la suma en R0, deshabilitamos (dejamos en 0) todas las señales.
+Esto fue un ejemplo de microprograma o secuencia (conjunto de pasos para un fin específico), y las CPUs micro programadas tenían muchos de estos en el secuenciador.
+Dicho secuenciador tendrá almacenados estos microprogramas para utilizar según necesite la CPU.
+Por ejemplo, tendrá otro microprograma para ejecutar pasos para buscar datos/instrucciones de la memoria principal (lo que se conoce como FETCH), de allí pasará al microprograma que se encarga de descodificar la instrucción obtenida, y una vez decodificada llamará a otro microprograma, por ej, el que vimos recién si debe realizar la suma R0 = R0 + MBR

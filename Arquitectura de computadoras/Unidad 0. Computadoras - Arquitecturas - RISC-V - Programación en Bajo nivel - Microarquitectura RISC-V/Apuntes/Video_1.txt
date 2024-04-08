@@ -1,0 +1,11 @@
+Video 1:
+
+La función de una computadora es tomar datos del mundo real y devolver un resultado. Esto lo hace a través de un programa que contiene una serie de instrucciones que le indican qué es lo que debe hacer con los datos.
+Hay computadoras de propósito general (como las personales que usamos día a día), y computadoras de fines específicos que realizan una sola tarea en particular (son los sistemas embebidos). Ej de esto último puede ser un sistema que controla los aparatos de una casa.
+Cualquiera de ambos tipos de computadoras está compuesta por 3 bloques funcionales:
+- CPU (unidad central de proceso): coordina todas las acciones dentro de la computadora.
+- MEM (memoria): almacena datos temporales y programas, memoria principal.
+- E/S (entrada/salida): bloque de interfaces de entradas y salidas para comunicar la computadora con el mundo exterior.
+Estos tres bloques se comunican a través de buses-
+Los buses vendrían a ser los "cables" por donde circulan los datos, y siempre se toman como un conjunto.
+Por ej, un conjunto de 10 cables por donde circulan 10 bits en un momento dado pueden representar tal vez una dirección de memoria.

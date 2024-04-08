@@ -1,0 +1,5 @@
+Aclaración imagen flanco ascendente/descendente:
+
+- El circuito de la señal de clock de flanco ascendente implica que la salida tendrá un 1 cuando la entrada clock es 1, y que por lo tanto habilitará que se tomen nuevos cambios sincrónicos en el flip flop, solo por un período de tiempo hasta que la compuerta NOT conmute y convierta el 1 que está también en la otra entrada en 0, y ese 0 se convierta en la salida.
+
+- El circuito de la señal de clock de flanco descendente implica que la salida tendrá un 1 cuando la entrada clock es 0 (por ña NAND sale un 1), solo por un período de tiempo hasta que la compuerta NOT conmute y convierta el 0 en 1, se niega ese 1 en la NAND, y sale un 0 al final

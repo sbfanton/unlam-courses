@@ -1,0 +1,24 @@
+Video 2:
+
+Circuito FF D OE (ver imagen en PPT para comprender explicación)
+
+La salida QOE se desconecta o se conecta al circuito (salida Q del FF) según el valor del pin/señal OE. El estado de desconexión se conoce como "tercer estado" ya que no se recibe ni un 0 ni un 1.
+Para ver el funcionamiento de este circuito en Logisim, recordar que para replicar el circuito FF D OE del ppt, empezamos por el FF seleccionando en Logisim el modelo "Memoria" -> "Biestable D". Por otra parte, funciona con flanco ascendente (la señal de clock permite memorizar cuando pasa de 0 inicial a 1).
+El FF este en particular lo tenemos inicializado en 0.
+Podemos forzar un 1 pasando el Preset a 1, siempre y cuando no esté en 1 el Reset. EL Reset en 1 fuerza un 0 en el FF y tiene prioridad sobre la señal del Preset.
+Tanto el Reset como el Preset sirven para establecer/forzar un valor inicial en 0 o 1 respectivamente, de nuevo, al inicio del FF. Hecho esto, se puede volver a dejar el reset y Preset en 0, ya que el valor ya quedó almacenado en el FF.
+Cuando la entrada D del FF está en 1 o 0, ese valor es el que tomará el FF. Sin embargo, solo tomará lo de la entrada D cuando la señal de clock esté en flanco ascendente. Pero tener en cuenta que en las computadoras la señal de clock no suele detenerse, ya que son varios circuitos los que están conectados a ella. De allí que se necesite una entrada o señal extra llamada CE (clock enable) que indica al FF si CE esta en 1 y se produce el flanco ascendente, que ahora sí puede tomar lo que se encuentre en la entrada D.
+Entonces, los pasos serían:
+Se establece el valor inicial del FF en 1 o 0 con el Preset o el Reset, teniendo en cuenta que el Reset siempre tiene más relevancia que el Preset.
+Se establece CE en 1 para indicar que se tome el valor de D en el próximo flanco ascendente.
+Cuando se produce el flanco ascendente, ingresa al FF el valor de D, sea un 1 o un 0.
+Si se vuelve a colocar CE en 0, ya no se tomarían los valores que vaya teniendo D en el flanco ascendente, y queda almacenado en el FF el valor que se había tomado de D previamente.
+Por otro lado, el bufe controlado conectado entre la salida Q del FF y el pin QOE es el que indica si ese valor de la salida Q está conectado a la salida QOE que probablemente se dirigirá o entrará a otro circuito. La entrada OE es la que controla este pasaje, si está en 1 lo permite, si está en 0 no lo permite (esto último es lo que se conoce como alta impedancia). Es como si físicamente estuviese desconectado.
+
+Ahora bien, tener un único FF D OE en los bloques funcionales no tiene mucho sentido ya que solo estaríamos trabajando con un bit. La idea es trabajar con más bits, por lo cual se tendrán varios de estos FF en paralelo, construyendo lo que se llama un registro Latch. 
+Si necesitamos trabajar por ej con 8 bits, tendríamos 8 FF, junto con un bus de 8 cables para que viaje cada uno de esos 8 bits como entradas de este registro. A su vez, tendrá 8 cables de salida (cada cable conectado a la salida QOE de cada FF). La señal de OE y CE estarán conectadas en paralelo, de manera sincrónica, en los 8 FF.
+
+
+Mas allá de este tipo de componentes secuenciales, los bloques funcionales tienen componentes que consisten en circuitos combinacionales. Este tipo de circuitos, recordemos, no manejan memoria es decir no memorizan un valor como en el caso de los FF en los secuenciales, pero sí tienen su propia lógica que ya queda establecida en su tabla de verdad. Estos circuitos pueden ser de distinto tipo, siendo por ej los sumadores los más útiles.
+Otro de los componentes combinaciones más útiles son los multiplexores, donde el valor del selector de entrada establece cuál de los datos de entrada se conectará a la salida. Con un número n de selectores habrá 2^n datos de entrada, y solo uno de esos datos se conectará a la salida según lo que indique el selector.
+También están los demultiplexores que hacen el camino inverso.
