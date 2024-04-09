@@ -74,6 +74,18 @@ justamente para trabajar con operandos (registros) pero no con valores inmediato
 La segunda linea guarda en x4 la resta entre x0 (que es siempre 0 por defecto y constante) y x5. Es decir, 
 guarda -4 (recordar que siempre están en Complemento a la base).
 
+
+
+En la arquitectura RISC-V, cuando se realiza una división entera con la instrucción div, el cociente se guarda en el registro de destino especificado 
+(rd), mientras que el residuo se guarda en el siguiente registro, es decir, en el registro de destino más uno.
+
+Por lo tanto, si ejecutas la instrucción div rd, rs1, rs2, el cociente se almacenará en rd, y el residuo se almacenará en rd + 1.
+
+Esta es una convención común en muchas arquitecturas de procesadores RISC para instrucciones de división entera, 
+donde se desea obtener tanto el cociente como el residuo de una operación de división. 
+Asignar el residuo al registro siguiente al del cociente facilita su acceso y uso posterior en programas.
+
+
 ***** Accesos a memoria de datos *****
 
 RISC-V se maneja con datos ya inicializados en memoria. Es decir, no podemos usar variables que solo esten declaradas pero no inicializadas.
