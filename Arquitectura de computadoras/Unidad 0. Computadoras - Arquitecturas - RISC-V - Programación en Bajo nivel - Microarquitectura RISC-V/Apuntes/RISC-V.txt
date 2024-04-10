@@ -249,7 +249,7 @@ MIN:
    addi a0, a1, 0
 
 volver:
-   jarl x0, x1, 0 #ret
+   jalr x0, x1, 0 #ret
 
 En este ejemplo tenemos varias subrutinas.
 Analicemos cada parte:
