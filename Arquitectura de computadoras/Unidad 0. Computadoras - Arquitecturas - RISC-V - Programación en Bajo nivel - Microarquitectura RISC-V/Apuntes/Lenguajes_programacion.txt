@@ -1,0 +1,34 @@
+Lenguajes de programación
+
+Ver ppt para encontrar diferencias entre un lenguaje de programación de alto nivel como lo es C con respecto a uno de bajo nivel como 
+Assembler.
+
+Entre dichas diferencias, encontramos que los lenguajes de alto nivel utilizan variables locales, mientras que en ASM se encuentran los datos 
+almacenados en memoria y los datos que se encuentran en los registros, con los cuale sse interactúan en el programa.
+C cuenta con variables almacenadas en posiciones de memoria, pero estas posiciones de memoria no sin fijas, sino que tiene que poder reubicarse 
+dependiendo de dónde corra el programa. A tal fin se van a valer de dos punteros (recordemos que los punteros almacenan direcciones de memoria).
+Uno es el punto de pila (stack pointer), y el otro es el frame pointer.
+Por otro lado, en C las posiciones de memoria para las variables no son absolutas, sino relativas.
+
+Con respecto al stack pointer (sp), si pensamos en una función de C, imaginemos que tenemos una pila de posiciones de memoria, y el sp 
+en primer lugar apuntará a la dirección más alta asignada para esta función. Cuando dentro de la función encontramos por ej variables 
+locales, el sp irá decrementando en pos de memoria (de a 4 bytes, ya que cada palabra ocupa 32 bits).
+De esa forma, si quisieramos acceder por ej a una variable ubicada en la siguiente pos de palabra de memoria, sería sp[4], entendiendo 
+el 4 como el offset de cantidad de bytes que debe moverse el sp con respecto a su posición actual.
+Sin embargo, debemos tener en cuenta que tal vez en otro momento de la función, se guarda en una nueva posición de memoria otro valor,
+que puede llegar a ser un valor temporal, pero que en si se almacena en memoria, entonces la referencia para llegar a cierta variable 
+que teníamos antes por ej con sp[4] queda desactualizada.
+
+Para afrontar esta problemática, se utiliza el frame pointer (fp).
+El fp, a diferencia del sp que irá cambiando dinámicamente su posición, se mantendrá fijo en la posición inicial que se le dio al sp 
+al principio de la función. Y como allí quedará siempre, no habrá problema para ir refiriéndonos a las distintas posiciones con los 
+offset correspondientes para acceder a los datos. Por otro lado, para movernos x bytes respecto a donde se encuentra el fp, sería 
+referenciado así: fp[-4], para movernos a la segunda palabra desde el inicio (se resta porque recordar que la primera pos de memoria 
+que se le asigna a una función siempre será la más alta de la pila de mem asignada para dicha función).
+
+Ver en el video y ppt primeros ejemplos de cómo se traduce una función sencilla en C a Assembler y qué significa cada instrucción 
+correspondiente a ASM respecto a la función de C. El video es "Unidad0 Variables Locales"
+
+Unos detalles a tener en cuenta:
+- todo valor que se retorna de una función, se almacena en el registro a0, que es el destinado para ello
+- el fp corresponde al registro x8
