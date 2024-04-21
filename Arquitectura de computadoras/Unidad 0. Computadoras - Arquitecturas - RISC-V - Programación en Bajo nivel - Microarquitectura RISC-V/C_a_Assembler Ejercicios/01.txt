@@ -1,0 +1,18 @@
+Ejercicios Lenguaje C a ASM (parte C TP):
+
+1)
+void main(){
+}
+
+A ASM:
+00010054 <main>: 			# valores iniciales: x2=0x7FFFFFF0; x8=0x00000000
+10054: ff010113 addi x2 x2 -16		# x2 = 0x7FFFFFF0 - 16(decimal) = 0x7FFFFFF0 - 10(hexa) = 0x7FFFFFE0; x8=0x00000000
+10058: 00812623 sw x8 12 x2		# Se almacena en pos 0x7FFFFFEC (que es x2 + 12decimal = x2 + C) el valor de x8 (0x00000000)
+1005c: 01010413 addi x8 x2 16		# x2 = 0x7FFFFFE0; se almacena en x8 el valor 0x7FFFFFF0 (x2 + 16decimal = x2 + 10hexa)
+
+10060: 00000013 addi x0 x0 0		# no se realiza ninguna operación
+					# se restauran los valores iniciales
+10064: 00c12403 lw x8 12 x2		# x8 = 0x00000000 (valor almacenado en pos 0x7FFFFFEC, que es x2 + 12 = x2 + C = 0x7FFFFFE0 + C)
+10068: 01010113 addi x2 x2 16		# x2 = 0x7FFFFFE0 + 16(decimal) = 0x7FFFFFE0 + 10(hexa) = 0x7FFFFFF0
+1006c: 00008067 jalr x0 x1 0		# retorno
+

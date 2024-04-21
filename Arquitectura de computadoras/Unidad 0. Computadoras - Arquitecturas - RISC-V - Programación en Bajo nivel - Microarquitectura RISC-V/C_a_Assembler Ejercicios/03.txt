@@ -1,0 +1,59 @@
+Ejercicio Lenguaje C a ASM (parte C TP):
+
+3) 
+En lenguaje C:
+
+void main(){
+int A=5;
+int B=10;
+int C;
+C=funcion(A,B);
+}
+int funcion(int a, int b){
+return a+b;
+}
+
+
+En ASM:
+
+00010054 <main>:
+10054: fe010113 addi x2 x2 -32
+10058: 00112e23 sw x1 28 x2
+1005c: 00812c23 sw x8 24 x2
+10060: 02010413 addi x8 x2 32
+10064: 00500793 addi x15 x0 5		# se almacena 5 en x15
+10068: fef42623 sw x15 -20 x8		# se almacena en fp[-20] lo que hay en x15 (variable A)
+1006c: 00a00793 addi x15 x0 10		# se almacena 10 en x15
+10070: fef42423 sw x15 -24 x8		# se almacena en fp[-24] lo que hay en x15 (variable B)
+10074: fe842583 lw x11 -24 x8		# se almacena en x11 (a1) lo que hay en fp[-24] (variable B) para pasar a la funcion
+10078: fec42503 lw x10 -20 x8		# se almacena en x10 (a0) lo que hay en fp[-20] (variable A) para pasar a la funcion
+1007c: 01c000ef jal x1 28 <funcion>
+10080: fea42223 sw x10 -28 x8		# se almacena en fp[-28] lo que devolvio la funcion en el registro x10 (a0), que es la variable C
+10084: 00000013 addi x0 x0 0
+10088: 01c12083 lw x1 28 x2
+1008c: 01812403 lw x8 24 x2
+10090: 02010113 addi x2 x2 32
+10094: 00008067 jalr x0 x1 0
+
+00010098 <funcion>:
+10098: fe010113 addi x2 x2 -32
+1009c: 00812e23 sw x8 28 x2
+100a0: 02010413 addi x8 x2 32
+100a4: fea42623 sw x10 -20 x8
+100a8: feb42423 sw x11 -24 x8
+100ac: fec42703 lw x14 -20 x8
+100b0: fe842783 lw x15 -24 x8
+100b4: 00f707b3 add x15 x14 x15
+100b8: 00078513 addi x10 x15 0
+100bc: 01c12403 lw x8 28 x2
+100c0: 02010113 addi x2 x2 32
+100c4: 00008067 jalr x0 x1 0
+
+
+1) Variable A -> fp[-20]
+Variable B -> fp[-24]
+Variable C -> fp[-28]
+
+2) Se utilizan los registros x11 (a1) y x10 (a0) para pasar los valores A y B a la funcion
+
+3) Se utiliza el registro x10 (a0) para retornar el valor de a+b de la funcion

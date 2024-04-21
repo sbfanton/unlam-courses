@@ -1,0 +1,41 @@
+Ejercicios Lenguaje C a ASM (parte C TP):
+
+2)
+En lenguaje C:
+
+void main(){
+int a=5;
+}
+void funcion(){
+int a=10;
+}
+
+
+En ASM:
+
+00010054 <main>:
+    10054:        fe010113        addi x2 x2 -32
+    10058:        00812e23        sw x8 28 x2
+    1005c:        02010413        addi x8 x2 32		# hasta aca, se ejecuta lo tipico para inicializar sp y fp propios del main
+    10060:        00500793        addi x15 x0 5		# se almacena valor 5 en x15
+    10064:        fef42623        sw x15 -20 x8		# se almacena valor de x15 en f[-20] de main
+    10068:        00000013        addi x0 x0 0
+    1006c:        01c12403        lw x8 28 x2
+    10070:        02010113        addi x2 x2 32
+    10074:        00008067        jalr x0 x1 0
+
+00010078 <funcion>:
+    10078:        fe010113        addi x2 x2 -32
+    1007c:        00812e23        sw x8 28 x2
+    10080:        02010413        addi x8 x2 32		# hasta aca, se ejecuta lo tipico para inicializar sp y fp propios de la funcion (NO confundir con los del main)
+    10084:        00a00793        addi x15 x0 10	# se almacena valor 10 en x15
+    10088:        fef42623        sw x15 -20 x8		# se almacena valor de x15 en f[-20] de la funcion
+    1008c:        00000013        addi x0 x0 0
+    10090:        01c12403        lw x8 28 x2
+    10094:        02010113        addi x2 x2 32
+    10098:        00008067        jalr x0 x1 0
+
+En sí, observamos que main y funcion tienen una estructura idéntica, con la diferencia de que en cada caso existe un sp y fp propios, 
+razón por la cual no deben ser confundidos uno y otro. Por otra parte, los valores que se almacenan en los registros x15, y luego 
+en las posiciones correspondientes de memoria son 5 en el main, y 10 en funcion.
+
