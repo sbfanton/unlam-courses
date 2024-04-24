@@ -1,0 +1,67 @@
+Ejercicios Lenguaje C a ASM:
+
+6)
+Lenguaje C:
+
+void main(){
+ int a=10;
+ int b=0;
+ if (a>=5){ 
+   b=2;
+ } else if (a>=3){
+   b=3;
+ } else {
+   b=4;
+ }
+}
+
+Referencias:
+a>=5 es contrario a 4>=a
+a>=3 es contrario a 2>=a
+
+ASM:
+
+00010074 <main>:
+10074: fe010113 addi x2 x2 -32
+10078: 00812e23 sw x8 28 x2
+1007c: 02010413 addi x8 x2 32
+
+10080: 00a00793 addi x15 x0 10	# se guarda 10 en x15
+10084: fef42623 sw x15 -20 x8	# se almacena en fp -20 lo que hay en x15 (var a)
+10088: fe042423 sw x0 -24 x8	# se almacena en fp -24 el valor 0 (var b)
+
+1008c: fec42703 lw x14 -20 x8	# se carga en x14 la var a
+10090: 00400793 addi x15 x0 4	# se guarda el valor 4 en x15
+10094: 00e7d863 bge x15 x14 16	# se realiza la comparacion branch greater or equal. se compara si x15 (4) es mayor/igual a x14 (var a), salta a 100A4
+10098: 00200793 addi x15 x0 2	# si la condicion anterior no se cumple, se guarda un 2 en x15
+1009c: fef42423 sw x15 -24 x8	# se almacena en fp -24 (var b) lo que hay en x15 (2)
+100a0: 0240006f jal x0 36	# hace un salto a 1000C4
+100a4: fec42703 lw x14 -20 x8	# proviene de 10094. carga en x14 la var a
+100a8: 00200793 addi x15 x0 2	# guarda el valor 2 en x15
+100ac: 00e7d863 bge x15 x14 16	# compara si x15 (2) es mayor/igual a x14 (var a). si cumple, salta a 100BC.
+100b0: 00300793 addi x15 x0 3	# guarda el valor 3 en x15
+100b4: fef42423 sw x15 -24 x8	# almacena en fp -24 lo que hay en x15
+100b8: 00c0006f jal x0 12	# hace un salto a 1000C8
+100bc: 00400793 addi x15 x0 4	# guarda el valor 4 en x15
+100c0: fef42423 sw x15 -24 x8	# almacena en fp -24 (var b) lo que hay en x15
+
+100c4: 00000013 addi x0 x0 0
+100c8: 01c12403 lw x8 28 x2
+100cc: 02010113 addi x2 x2 32
+100d0: 00008067 jalr x0 x1 0
+
+
+1) La variable a se encuentra en fp[-20], y la variable b en fp[-24].
+
+2) 10094: 00e7d863 bge x15 x14 16
+Lo que se está comparando logicamente en esa instruccion es si el valor almacenado en x15 (que en ese instante es 4) es mayor o igual al valor 
+almacenado en x14 (que en ese instante es lo de la variable a, o sea 10).
+Basicamente es 4 >= a, que es la comparacion contraria al primer if (a >= 5).
+De cumplirse esa condicion, es decir, que el primer if no se cumple, realiza un salto para analizar la siguiente condicion.
+
+3) 100ac: 00e7d863 bge x15 x14 16
+Lo que se está comparando logicamente en esa instruccion es si el valor almacenado en x15 (que en ese instante es 2) es mayor o igual al valor 
+almacenado en x14 (que en ese instante es lo de la variable a, o sea 10).
+Basicamente es 2 >= a, que es la comparacion contraria al segundo if (a >= 3).
+De cumplirse esa condicion, es decir, que el segundo if no se cumple, realiza un salto para realizar la accion final.
+

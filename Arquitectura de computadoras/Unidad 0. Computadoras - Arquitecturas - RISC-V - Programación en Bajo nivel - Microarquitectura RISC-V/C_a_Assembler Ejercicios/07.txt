@@ -1,0 +1,79 @@
+Ejercicios Lenguaje C a ASM:
+
+7)
+Lenguaje C:
+
+void funcion(int ,int , int *);
+
+int main(){
+ int x=10;
+ int y=20;
+ int z=0;
+ funcion(x,y,&z);
+ return z;
+}
+
+void funcion (int a,int b, int *c){
+ *c = a+b;
+}
+
+
+ASM:
+
+00010074 <main>:
+10074: fe010113 addi x2 x2 -32
+10078: 00112e23 sw x1 28 x2
+1007c: 00812c23 sw x8 24 x2
+10080: 02010413 addi x8 x2 32
+
+10084: 00a00793 addi x15 x0 10		# se guarda en x15 el valor 10
+10088: fef42623 sw x15 -20 x8		# se almacena en fp -20 lo que hay en x15 (var x)
+1008c: 01400793 addi x15 x0 20		# se guarda en x15 el valor 20
+10090: fef42423 sw x15 -24 x8		# se almacena en fp -24 lo que hay en x15 (var y)
+10094: fe042223 sw x0 -28 x8		# se almacena en fp -28 el valor 0 (var z)
+10098: fe440793 addi x15 x8 -28		# se guarda en x15 la direccion de memoria de var z
+1009c: 00078613 addi x12 x15 0		# se guarda en x12 lo que hay en x15
+100a0: fe842583 lw x11 -24 x8		# se carga en x11 la var y
+100a4: fec42503 lw x10 -20 x8		# se carga en x10 la var x
+100a8: 01c000ef jal x1 28 <funcion>	# salto a funcion
+100ac: fe442783 lw x15 -28 x8
+100b0: 00078513 addi x10 x15 0
+100b4: 01c12083 lw x1 28 x2
+100b8: 01812403 lw x8 24 x2
+
+100bc: 02010113 addi x2 x2 32
+100c0: 00008067 jalr x0 x1 0
+
+
+000100c4 <funcion>:
+100c4: fe010113 addi x2 x2 -32
+100c8: 00812e23 sw x8 28 x2
+100cc: 02010413 addi x8 x2 32
+
+100d0: fea42623 sw x10 -20 x8		# se almacena en fp -20 de funcion lo que hay en x10 (var a)
+100d4: feb42423 sw x11 -24 x8		# se almacena en fp -24 de funcion lo que hay en x11 (var b)
+100d8: fec42223 sw x12 -28 x8		# se almacena en fp -28 lo que hay en x12 (puntero a z)
+100dc: fec42703 lw x14 -20 x8		# se carga en x14 la var a
+100e0: fe842783 lw x15 -24 x8		# se carga en x15 la var b
+100e4: 00f70733 add x14 x14 x15		# se guarda en x14 la suma de x14 (var a) y x15 (var b)
+100e8: fe442783 lw x15 -28 x8		# se carga en x15 lo que hay en fp -28 (puntero/direccion a z)
+100ec: 00e7a023 sw x14 0 x15		# se almacena en la direccion almacenada en x15, lo que hay en x14
+
+100f0: 00000013 addi x0 x0 0
+100f4: 01c12403 lw x8 28 x2
+100f8: 02010113 addi x2 x2 32
+100fc: 00008067 jalr x0 x1 0
+
+1) Variable x: en fp[-20]
+Variable y: en fp[-24]
+Variable z: en fp[-28]
+
+2) A la función se envía el valor de la variable x en x10, el valor de la variable y en x11, y la dirección de memoria de la variable z en x12.
+
+3) En "funcion":
+Variable a: en fp[-20]
+Variable b: en fp[-24]
+Variable c: en fp[-28]
+
+4) 100ec: 00e7a023 sw x14 0 x15
+En esa línea se almacena el valor de la suma a+b en *c

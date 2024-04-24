@@ -1,0 +1,94 @@
+Ejercicios Lenguaje C a ASM:
+
+4)
+Lenguaje C:
+
+unsigned char funcion(unsigned char,unsigned char);
+void main(){
+unsigned char A=5;
+unsigned char B=10;
+unsigned char C;
+C=funcion(A,B);
+}
+unsigned char funcion(unsigned char a, unsigned char b){
+return a+b;
+}
+
+
+ASM (codigo de "funcion"):
+
+000100a4 <funcion>:
+100a4: fe010113 addi x2 x2 -32
+100a8: 00812e23 sw x8 28 x2
+100ac: 02010413 addi x8 x2 32
+
+100b0: 00050793 addi x15 x10 0		# guarda en x15 lo que hay en el param de entrada x10
+100b4: 00058713 addi x14 x11 0		# guarda en x14 lo que hay en el param de entrada x11
+100b8: fef407a3 sb x15 -17 x8		# guarda en fp -17 lo que hay en x15 (guarda en byte) -> var a
+100bc: 00070793 addi x15 x14 0		# guarda en x15 lo que hay en x14
+100c0: fef40723 sb x15 -18 x8		# guarda en fp -18 lo que hay en x15 (guarda en byte) -> var b
+100c4: fef44703 lbu x14 -17 x8		# lbu es "load byte unsigned", es decir, cargar desde memoria 8 bits (1 byte) sin considerar bit de signo. Carga "a" en x14
+100c8: fee44783 lbu x15 -18 x8		# carga "b" en x15
+100cc: 00f707b3 add x15 x14 x15		# suma x14 (a) + x15 (b), y lo guarda en x15
+100d0: 0ff7f793 andi x15 x15 255	# operacion and inmediate bit a bit, se guarda en x15
+100d4: 00078513 addi x10 x15 0		# se guarda en x10 (retorno) lo que hay en x15
+
+100d8: 01c12403 lw x8 28 x2
+100dc: 02010113 addi x2 x2 32
+100e0: 00008067 jalr x0 x1 0
+
+
+1) La razón por la que se utiliza la instrucción AND inmediata ("andi") podría ser para asegurar que el resultado de la suma 
+no tenga ningún bit establecido más allá de los primeros 8 bits (byte más bajo) del registro x15.
+
+Supongamos que después de la suma, el registro x15 contiene un valor de 16 bits, pero solo estamos interesados en los primeros 
+8 bits como resultado válido. Al realizar la operación AND con el valor inmediato 255 (que es 11111111 en binario), todos los bits 
+más allá de los primeros 8 bits se establecerán en 0, manteniendo solo los primeros 8 bits intactos.
+
+En resumen, el "andi x15 x15 255" podría estar destinado a asegurar que solo los primeros 8 bits del registro x15, que contienen 
+el resultado de la suma de bytes sin signo, sean considerados como el resultado final y que el resto de los bits sean descartados. 
+Esto puede ser útil en situaciones donde solo se necesita una parte específica del resultado de una operación aritmética.
+
+Tiene mucho sentido en ese contexto. Cuando estás trabajando con una función en C que devuelve un tipo de dato unsigned char, 
+estás limitando el rango de valores posibles a los primeros 8 bits, es decir, a un byte sin signo.
+
+Por lo tanto, después de realizar operaciones aritméticas en RISC-V que podrían generar resultados más grandes que un byte, como en 
+tu caso con la suma, es importante ajustar el resultado para asegurarse de que se ajuste al tipo de dato esperado en C, es decir, 
+un byte sin signo. La instrucción andi con un inmediato de 255 (que en binario es 11111111) es una forma común de lograr esto, ya que 
+borra los bits más allá del primer byte, dejando solo los primeros 8 bits intactos.
+
+Es una práctica común en la programación de bajo nivel, donde se manipulan tipos de datos específicos y se necesita controlar el tamaño 
+y el formato de los datos resultantes de las operaciones aritméticas.
+
+2) Si A = 200 -> 1100 1000   y B = 100 -> 0110 0100
+
+	1100 1000
+  +	0110 0100
+--------------------
+      1 0010 1100
+
+Aplicando andi 255:
+	...000 1111 1111
+AND	     1 0010 1100
+-------------------------
+	     0 0010 1100 -> en decimal = 44	
+
+El resultado es 44.
+
+3) Para que devuelva un resultado valido, se debería cambiar el tipo de dato de retorno y de la variable c del main:
+
+unsigned int funcion(unsigned char a, unsigned char b);
+
+void main(){
+unsigned char A=5;
+unsigned char B=10;
+unsigned int C;
+C=funcion(A,B);
+}
+
+unsigned int funcion(unsigned char a, unsigned char b){
+return a+b;
+}
+
+
+
