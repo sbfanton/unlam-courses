@@ -1,0 +1,24 @@
+Ejercicios Lenguaje C a ASM:
+
+9)
+Lenguaje C:
+
+void main(){
+  while(1);
+}
+
+
+ASM:
+
+00010054 <main>:
+10054: ff010113 addi x2 x2 -16
+10058: 00812623 sw x8 12 x2
+1005c: 01010413 addi x8 x2 16
+10060: 0000006f jal x0 0
+
+
+La instrucción jal x0 0 probablemente sea una forma de implementar el bucle infinito. 
+La instrucción jal podría estar siendo utilizada para hacer un salto a la dirección de inicio del programa (dirección 0), 
+y como el registro de enlace (x0 en este caso) no se utiliza para almacenar la dirección de retorno, efectivamente crea un bucle infinito.
+En resumen, la instrucción jal x0 0 está siendo utilizada para crear un bucle infinito que equivale al bucle while(1) en C.
+

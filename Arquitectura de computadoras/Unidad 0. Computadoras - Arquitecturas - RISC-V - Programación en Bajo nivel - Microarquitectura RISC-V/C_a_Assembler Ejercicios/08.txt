@@ -1,0 +1,50 @@
+Ejercicios Lenguaje C a ASM:
+
+8)
+Lenguaje C:
+
+int main(){
+int b=2;
+int c=0;
+for (int i=0;i<10;i++){
+c=c+b;
+}
+return c;
+}
+
+
+ASM:
+
+00010054 <main>:
+10054: fe010113 addi x2 x2 -32
+10058: 00812e23 sw x8 28 x2
+1005c: 02010413 addi x8 x2 32
+
+10060: 00200793 addi x15 x0 2	# se guarda el valor 2 en x15
+10064: fef42223 sw x15 -28 x8	# se almacena el valor de x15 en fp -28 (var b)
+10068: fe042623 sw x0 -20 x8	# se almacena el valor 0 en fp -20 (var c)
+1006c: fe042423 sw x0 -24 x8	# se almacena el valor 0 en fp -24 (var i del for)
+10070: 0200006f jal x0 32	# salto a 1 0090
+10074: fec42703 lw x14 -20 x8	# se carga en x14 la var c
+10078: fe442783 lw x15 -28 x8	# se carga en x15 la var b
+1007c: 00f707b3 add x15 x14 x15	# se guarda en x15 la suma de x15 + x14
+10080: fef42623 sw x15 -20 x8	# se alamcena en var c el valor de x15 despues de la suma
+10084: fe842783 lw x15 -24 x8	# se carga var i en x15
+10088: 00178793 addi x15 x15 1	# se suma 1 a x15 (var i)
+1008c: fef42423 sw x15 -24 x8	# se almacena en var i el valor de x15
+10090: fe842703 lw x14 -24 x8	# se carga var i en x14
+10094: 00900793 addi x15 x0 9	# se guarda valor 9 en x15
+10098: fce7dee3 bge x15 x14 -36	# comparacion x15 (9) >= x14 (i), si se cumple salta a 1 0074
+1009c: fec42783 lw x15 -20 x8	# se carga var c en x15
+100a0: 00078513 addi x10 x15 0	# se guarda valor de x15 en x10 (retorno en el fin del main)
+
+100a4: 01c12403 lw x8 28 x2
+100a8: 02010113 addi x2 x2 32
+100ac: 00008067 jalr x0 x1 0
+
+1) Variable b: fp[-28]
+Variable c: fp[-20]
+Variable i: fp[-24]
+
+2) 10098: fce7dee3 bge x15 x14 -36
+En esa linea se realiza la comparación i<10, aunque aquí se usa una comparación equivalente pues sería: 9 >= i
