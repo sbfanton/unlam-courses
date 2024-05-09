@@ -1,0 +1,41 @@
+Unidad 0.4: Microarquitectura
+
+Microarquitectura RISC V
+Con microarquitectura nos referimos ya no al ISA (arquitectura de programación de una computadora, que nosotros como programadores necesitamos conocer para usar la computadora), sino a aquellos componentes que brindan el soporte a la computadora, su estructura, tales como conexiones internas, componentes internos y registros inaccesibles que necesitemos conocer.
+
+En particular, la que veremos es la microarquitectura RISC V2p, que esta compuesta por componentes que son circuitos secuenciales (tienen flip flops y señales de clock), y a su vez cuenta con circuitos enteramente combinacionales (lo que reciben de entrada, lo procesan y devuelven una salida, sin memorizar). Ejemplo de estos ultimos se encuentran los multiplexores, sumadores, compuertas and, or, con entradas o salidas negadas, etc.
+
+Veamos los componentes más importantes:
+
+ - Latch:
+el registro latch es un componente integrado por un conjunto de FF D en paralelo. Tiene una señal de reset para forzar un cero de manera inicial, y solo se almacenarán nuevos valores en el latch que provienen de su entrada (in) y pondra ese valor a disposicion en su salida (out) cuando la señal de clock lo permita (por flanco ascendente) y ademas cuando la señal de clock enable (CE) este en 1.
+
+- Memoria de instrucciones:
+es un bloque de almacenamiento que va a almacenar el conjunto de instrucciones que va a ejecutar la unidad central de proceso.
+Consiste por un lado en un multiplexor con varios latch conectados en su entrada y un selector llamado addr que elegira cual sera el latch del que se tomara el valor. Dicho valor no es otra cosa que la intruccion en si, la cual al salir del multiplexor entrara a otro registro latch con señal de clock y CE, los cuales estableceran en que momento queda disponible la instruccion a la salida de dicho latch.
+
+- Contador de ciclo:
+circuito secuencial que cuenta con clock y CE. Es un contador sincronico de 2 bits (modulo 4, ya que permite contar hasta 4 numeros), que genera la secuencia 00, 01, 10, 11.
+El contador se usa para definir en qué fase de la instruccion nos encontramos:
+	- Fetch (busqueda de instruccion) -> ciclo 00
+	- Decode/Execute (decodificacion y ejecucion) -> ciclo 01
+	- Memoria (acceso a memoria de datos para leer o escribir, si es que la instruccion indica acceder a memoria) -> ciclo 10
+	- Writeback (actualizar registros, PC y RD) -> ciclo 11  
+
+- Decodificador:
+teniendo la instruccion a ejecutar, el decodificador permite poner un 1 en la salida que corresponda segun qué se quiera ejecutar para que ese 1 se conecte al circuito encargado de continuar con la ejecucion de esa tarea.
+
+- Program Counter:
+Consiste en un registro latch cuya salida se encuentra conectada a dos sumadores, uno que le suma 4 al valor de su salida (4 bytes más para pasar a la instruccion de la proxima direccion de memoria, ya que en RISC V el direccionamiento es al byte y cada instruccion ocupa 32 bits), y otro sumador que sirve para sumarle un valor inmediato para los casos de saltos condicionales o JAL. Y luego ese valor se realimenta nuevamente al PC.
+
+- Register File:
+Este componente es similar al de la CPU cableada, con los dos multiplexores para seleccionar rs1 y rs2 respectivamente y el demultiplexor para almacenar el valor en el registro rd por medio de los conductores que conoceremos como datain. Solo que aqui vamos a teener 32 registros posibles a utilizar (no 4 como en los ejemplos iniciales de CPU cableada), cada uno representado con 5 bits, y no con 2 bits.
+Los valores del datain pueden provenir de la ALU, memoria, PC + 4 o del PC + inm.
+
+Otros componentes (ver en detalle en PPT) son:
+- IMM (para los inmediatos)
+- Memoria de datos (de donde leemos o escribimos datos. La direccion para un caso u otro conocida como addr siempre se obtiene de la ALU, el dataout permite obtener datos de memoria en la direccion correspondiente, y el datain es para almacenar)
+- ALU (puramente combinacional, tiene dos entradas que hacen referencias a los dos operandos A y B, los cuales se encuentran conectadores a circuitos de sumadores, restadores, desplazadores, etc, segun la operacion que se deba realizar)
+
+
+Ver ejemplos del PPT y del video con respecto a como para una intruccion, sin importar cual sea, SIEMPRE se atraviesan por los 4 ciclos mencionados mas arriba de fetch, decode/execute, memira y writeback
