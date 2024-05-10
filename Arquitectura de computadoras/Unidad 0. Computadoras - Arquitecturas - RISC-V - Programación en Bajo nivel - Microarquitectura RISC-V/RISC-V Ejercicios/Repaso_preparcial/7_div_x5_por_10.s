@@ -12,7 +12,7 @@
     loop:
         sub x5, x5, x6
         addi x7, x7, 1
-        bgt x5, x6, loop
+        bge x5, x6, loop
         add x8, x5, x0
         
     nop

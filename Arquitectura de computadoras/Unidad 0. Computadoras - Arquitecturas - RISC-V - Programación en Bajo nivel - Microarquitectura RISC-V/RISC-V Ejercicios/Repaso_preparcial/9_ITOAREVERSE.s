@@ -15,13 +15,13 @@
     loop:
         sub x5, x5, x6
         addi x7, x7, 1
-        bgt x5, x6, loop
+        bge x5, x6, loop
         addi a0, x5, 48
         addi a7, x0, 11
         ecall 
         add x5, x0, x7
         li x7, 0
-        bgt x5, x6, loop
+        bge x5, x6, loop
         addi a0, x5, 48
         addi a7, x0, 11
         ecall 
