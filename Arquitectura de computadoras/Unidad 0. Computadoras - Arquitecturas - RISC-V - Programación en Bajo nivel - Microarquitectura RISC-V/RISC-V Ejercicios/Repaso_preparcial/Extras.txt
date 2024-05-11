@@ -1,0 +1,13 @@
+1) Complete el siguiente programa en ASM de RISC-V que dado el vector, imprima por consola (mediante ecall) el contenido de las posiciones de memoria pares cuyo contenido sea un numero par:
+.data
+vector: .byte 0x01, 0x10, 0x02, 0xFF, 0x33, 0x90, 0x55
+finVector:
+.text
+
+2) Dado el vector anterior, escriba un programa que lea cada elemento que conforma el vector, complemente a la base dicho elemento, y finalmente guarde el elemento complementado en la misma posición de memoria donde fue leído
+
+3) Complete el siguiente programa en ASM de RISC-V que dado el vector cuente la cantidad de elementos cuyos últimos dos bits sean 10. Imprima el valor encontrado en la consola (mediante el ecall correspondiente)
+.data
+vector: .word 1, 20, 44, 2, 2306, 258, 259, 14594
+finVector:
+.text
