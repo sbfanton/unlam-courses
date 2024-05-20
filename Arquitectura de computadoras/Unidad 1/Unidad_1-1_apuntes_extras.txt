@@ -1,0 +1,42 @@
+Unidad 1.0 Memorias:
+
+Apuntes extras complementarios a ppt
+
+*** Conceptos fundamentales ***
+
+En arquitecturas de tipo Von Neumann, los datos e instrucciones compartian el mismo espacio de almacenamiento.
+En arquitecturas de tipo Harvard existe un espacio para memoria de instrucciones y otro para memoria de datos.
+Organizacion jerarquica de la memoria:
+- Los registros tiene una capacidad muy limitada de almacenamiento. Por ejemplo el register file de una microarquitectura RISC-V tiene 32 registros. Son muy rapidos. Costo de CPU en funcion de la superficie de silicio que ocupan
+- Memoria cache es intermediaria, de mayor capacidad de almacenamiento que los registros, aunque en lineas generales es de tamaño reducido. Velocidad de acceso alta, pero menor que la de los registros. No forma parte de la CPU, ni de la arquitectura de la computadora
+- Memoria principal: mayor capacidad que las anteriores, más lenta, menor costo, nivel de seguridad elevado
+- Memoria secundaria: no esta conectada directamente a los buses de la CPU, sino a travès de una interfaz, de ahi su nombre de secundaria. capacidad nuy grande, lentas, costo bajo en relación a la capacidad, y la seguridad depende de la tecnología (si son magneticos, solidos)
+
+En una arquitectura Harvard, la memoria de instrucciones es de solo lectura, mientras que la memoria de datos es de lecura/escritura.
+
+Las memorias pueden ser clasificadas de acuerdo a diversos criterios (ver ppt)
+
+Las RWM (Read Write Memory) son memorias de escritura/lectura, conocidas (no muy adecuadamente) como memorias RAM
+Las NVRWM con las memorias de lectura/escritura no volatiles, ya que aunque se corte el suministro electrico, permanecen conectadas a una bateria que les continua proveyendo energia
+
+En cuanto a la clasificacion de las memorias por tecnologia, tenemos que las memorias opticas y magneticas ocuparon un lugar muy importante, pero hoy en dia estan siendo cada vez mas reemplazadas por las memorias fabricadas con semiconductores.
+Estas ultimas estan hechas con transistores y son de dos tipos: unipolares, de transistores de una misma polaridad (canal N o canal P); CMOS, de transistores de ambas polaridades.
+
+BIOS -> Basic Input Output System
+
+*** Memorias SRAM y DRAM ***
+
+SRAM - Static RAM
+Se usan en memoria principal y cache, aunque principalmente en cache.
+Internamente estan compuestas por 6 transistores, que son los que se necesitan para formar un Flip Flop tipo D para 1 bit.
+Internamente posee transistores complementarios, es decir, transistores de canal N y canal P.
+
+DRAM - Dynamic RAM
+Tienen mayor densidad (mayor cantidad de bits de almacenamiento por superficie de silicio)
+Se usan en memorias principales
+Solo se necesita un transistor para almacenar un bit, lo que implica un menor costo, pero tambien tiene una gran desventaja, que es que este tipo de memoria requiere un procedimiento que se llama refresco. Esto consiste en la lecrura sistematica y ciclica de sus datos para poder mantener los datos validos en memoria. Cada celda de memoria esta compuesta por un transistor + un capacitor para mantener la energia.
+Un capacitor es basicamente un dispositivo que consiste en dos placas de elementos conductores y un elemento aislante entre ellas. Si conectamos una fuente de energia a un capacitor, en principio el capacitor va a estar totalmente descargado. Va a empezar una circulacion de corriente que va a seguir mientras se va cargando el capacitor. Una vez que el capacitor esta completamente cargado, la corriente deja de circular. Una de las propiedades, es que una vez que se le quita la fuente de alimentacion, este aun conserva su carga durante un periodo de tiempo que va a estar en funcion a las perdidas que pueda llegar a tener el material aislante. A lo largo de ese tiempo, el capacitor se va a descargar, y para mantener la carga que se le dio antes con la fuente de alimentacion, deberemos cargarlo nuevamente.
+Las memorias DRAM tienen la desventaja de que sus capacitores pierden carga electrica, razon por la cual existe la necesidad de refresco. Para generar dicho refresco, se debe realizar una lectura de los datos en memoria, pero las lecturas son destructivas, es decir, nos devuelven el dato, pero tambien descargan el capacitor. Como contrapartida, simultaneamente un circuito regenera el dato en cada lectura, y hay que realizarlo en un periodo no mayor a 2ms, para no perder los datos.
+El refresco consume tiempo. frente a esto, el diseño matricial nos permite realizar lecturas de una celda de memoria, lo que nos refresca toda la fila. Luego tenemos la regeneracion en rafaga. Y finalmente la regeneracion distribuida, que implica que cada circuito integrado, independientemente regenera la memoria alternando con accesos normales, y eso libera a la CPU de la tarea de refresco. Antes la CPU debia detener su proceso en curso, leyendo datos de la memoria (pero ignorandolos), para realizar el refresco, pero ese procedimiento con el tiempo se fue embebiendo en el propio chip de memoria para evitar que la CPU tuviera que llevar a cabo esta tarea.
+
+
