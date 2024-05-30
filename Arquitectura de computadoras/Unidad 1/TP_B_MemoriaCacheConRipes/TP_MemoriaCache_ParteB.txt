@@ -1,0 +1,173 @@
+TP - Unidad 1 - Memoria cache con Ripes (parte B)
+
+1) Teniendo en cuenta el siguiente ejemplo de programa escrito
+en Ripes:
+
+.data
+cadena: .string "Trabajo practico de memoria caché en Ripes"
+.text
+la x5,cadena
+salto:
+lb x6,0(x5)
+add a0,x0,x6
+addi a7,x0,11
+ecall
+addi x5,x5,1
+bne x6,x0,salto
+fin:
+beq x0,x0,fin
+
+Indique, utilizando las configuraciones de la memoria cache en Ripes, cuál
+sería la configuración que utilice la caché de datos de menor tamaño en:
+● Asignación asociativa
+● Asignación Directa
+● Asignación asociativa por conjunto
+Indique cómo quedarían configurados los diferentes campos en cada caso
+
+Respuesta:
+Las configuraciones que utilizan la cache de datos de menor tamaño (de las configuraciones que ya vienen preseteadas en Ripes) serian la de asignacion asociativa y la de asignacion directa, ya que en ambos casos la cantidad de lineas, cantidad de palabras por linea y tamaño de palabra necesitados son iguales para la ejecucion del programa.
+Ahora, si tenemos en cuenta factores como la cantidad de bits no solo de la dirección de memoria, sino otros como los bits de validez, suciedad y de politica de reemplazo, en ese caso sería la configuración de asociacion directa la que usa menor cantidad de bits (haciendo un tamaño menor).
+Ademas, como dato, tener en cuenta que todas las configuraciones son para direcciones de 32 bits, ya que la memoria principal cuenta con 2 a la 32 bytes o sea 4GB (y se direcciona al byte).Tambien se puede pensar que cuenta con 2 a la 32 direcciones, donde cada dirección apunta a un byte, y que se direcciona 1G palabras, pues cada palabra es de 4 bytes.
+
+En cada caso, la configuracion es la siguiente:
+
+● Asignación asociativa: 
+32 lineas, 4 palabras por linea, 32 bits (4bytes) por palabra.
+Es decir:
+log2(16bytes) = 4 bits -> para palabra (offset)
+32 bits - 4 bits = 28 bits -> para etiqueta
+
+● Asignación Directa:
+32 lineas, 4 palabras por linea, 32 bits (4bytes) por palabra.
+Es decir:
+log2(16bytes) = 4 bits -> para palabra (offset)
+log2(32 lineas) = 5 bits -> para linea
+32 bits - (4 bits + 5 bits) = 23 bits -> para etiqueta
+
+● Asignación asociativa por conjunto:
+32 lineas, 2 vias (lineas) por conjunto, 4 palabras por linea, 32 bits (4bytes) por palabra.
+Es decir:
+log2(16bytes) = 4 bits -> para palabra (offset)
+32/2 = 16 - log2(16 conjuntos) = 4 bits -> para conjunto
+32 - (4 + 4) = 24 bits -> para etiqueta
+
+-----------------------------------------------------------------------------------------------------------
+
+2) Teniendo en cuenta direcciones de 32 bits, una asignación asociativa de 4 líneas y dos palabras por línea, en que línea y con cual offset se ubicaría el inicio de la palabra “memoria” del ejercicio anterior.
+
+Respuesta: 
+2 palabras por linea = 2x4bytes = 8bytes por linea
+log2(8bytes) = 3 bits para el offset
+
+Contando desde el inicio hasta la "m" de "memoria" (incluyendola), hay 21 caracteres o sea 21 bytes.
+21 - 8 (de la primer fila) = 13
+13 - 8 (de la segunda fila) = 5 -> quedan 5 bytes en la tercer fila
+
+Para representar el 5to byte en el offset sería: 101 
+Si lo imaginamos en el diagrama de la direccion en Ripes seria: 
+el 5to byte esta en la segunda palabra (ya que los 4 bytes de la primera ya se "pasaron"), en el primer byte de la segunda palabra, o sea:
+1 01
+
+El inicio de la palabra "memoria" se ubicaria en la tercera línea con un offset 101
+
+-----------------------------------------------------------------------------------------------------------
+
+3) Teniendo en cuenta direcciones de 32 bits, una asignación directa de 4 líneas y cuatro palabras por línea, en que línea y con cual offset se ubicaría el inicio de la palabra “cache” del ejercicio anterior.
+
+Respuesta:
+4 lineas -> log2(4) = 2 bits para linea
+4 palabras por linea = 4x4bytes = 16bytes por linea
+log2(16bytes) = 4 bits para el offset
+
+Contando desde el inicio hasta la "c" de "cache" (incluyendola), hay 29 caracteres o sea 29 bytes.
+29 / 16 = 1 linea completa
+Resto: 13 bytes en linea 2 (linea 2 representada en bits: 10)
+
+Para representar el byte 13 en el offset seria: 1101 (o sea cuarta palabra, primer byte, es decir 11 01)
+
+-----------------------------------------------------------------------------------------------------------
+
+4) Teniendo en cuenta direcciones de 32 bits, una memoria caché de 512 bits y una asignación asociativa por conjunto de 2 vías y dos palabras por línea, en que línea, cuál conjunto y con cual offset se ubicaría el inicio de la palabra “Ripes” del ejercicio anterior.
+
+2 palabras por linea = 2x4bytes = 8 bytes por linea
+8 bytes x 2 = 16 bytes por conjunto
+MC de 512 bits = 512 / 8 = 64 bytes de MC
+64 bytes / 8 bytes = 8 lineas
+8 lineas / 2 = 4 conjuntos
+
+log2(4) = 2 bits para conjunto
+log2(8) = 3 bits para offset
+
+Contando desde el inicio hasta la "R" de "Ripes" (incluyendola), hay 38 caracteres o sea 38 bytes.
+38 bytes / 16 bytes = 2 conjuntos completos
+Resto: 6 bytes en conjunto 3 (conjunto 3 representado en bits: 11)
+
+Para representar el byte 6 en el offset seria: 110 (segunda palabra, segundo byte, o sea 1 10)
+
+-----------------------------------------------------------------------------------------------------------
+
+5) El siguiente ejercicio escrito para Ripes invierte el vector al finalizar su
+ejecución.
+
+vector: .word 1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90
+final:
+
+.text
+la x5,vector
+la x6, final
+addi x6, x6, -4
+
+invertir:
+lw x10, 0(x5)
+lw x11, 0(x6)
+sw x11, 0(x5)
+sw x10, 0(x6)
+addi x5, x5, 4
+addi x6, x6, -4
+bge x6, x5, invertir
+
+fin:
+beq x0,x0,fin
+
+Indique el formato y contenido de los campos de la caché de instrucciones, para cada método de asignación pre-seteados en Ripes para la instrucción sw x11,0(x5)
+
+Respuesta: (viendolo en Ripes)
+
+La instruccion en Ripes se encuentra en la direccion 0x0000001c, y la instruccion en si es la palabra 00b2a023
+
+● Asignación asociativa: 
+32 lineas, 4 palabras por linea, 32 bits (4bytes) por palabra.
+Es decir:
+log2(16bytes) = 4 bits -> para palabra (offset)
+32 bits - 4 bits = 28 bits -> para etiqueta
+
+En la cache de instrucciones queda asi: 0000000000000000000000000001 1100
+
+● Asignación Directa:
+32 lineas, 4 palabras por linea, 32 bits (4bytes) por palabra.
+Es decir:
+log2(16bytes) = 4 bits -> para palabra (offset)
+log2(32 lineas) = 5 bits -> para linea
+32 bits - (4 bits + 5 bits) = 23 bits -> para etiqueta
+
+En la cache de instrucciones queda asi: 00000000000000000000000 00001 1100
+
+● Asignación asociativa por conjunto:
+32 lineas, 2 vias (lineas) por conjunto, 4 palabras por linea, 32 bits (4bytes) por palabra.
+Es decir:
+log2(16bytes) = 4 bits -> para palabra (offset)
+32/2 = 16 - log2(16 conjuntos) = 4 bits -> para conjunto
+32 - (4 + 4) = 24 bits -> para etiqueta
+
+En la cache de instrucciones queda asi: 000000000000000000000000 0001 1100
+-----------------------------------------------------------------------------------------------------------
+
+6) Al finalizar la ejecución del ejercicio anterior que instrucciones queda cargadas en la línea 2 de la memoria caché de instrucciones con asignación asociativa 32 líneas 4 palabra por línea.
+
+Respuesta: (viendo en Ripes)
+
+En la linea 2 quedan cargadas las siguientes instrucciones:
+Palabra 1: ffc30313        addi x6 x6 -4
+Palabra 2: 0002a503        lw x10 0 x5
+Palabra 3: 00032583        lw x11 0 x6
+Palabra 4: 00b2a023        sw x11 0 x5
