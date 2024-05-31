@@ -61,14 +61,14 @@ log2(8bytes) = 3 bits para el offset
 
 Contando desde el inicio hasta la "m" de "memoria" (incluyendola), hay 21 caracteres o sea 21 bytes.
 21 - 8 (de la primer fila) = 13
-13 - 8 (de la segunda fila) = 5 -> quedan 5 bytes en la tercer fila
+13 - 8 (de la segunda fila) = 5 -> quedan 5 bytes en la tercer línea (sería la línea 2 -> 10, ya que se empieza desde línea 0 -> 00)
 
-Para representar el 5to byte en el offset sería: 101 
+Para representar el 5to byte en el offset sería: 100 
 Si lo imaginamos en el diagrama de la direccion en Ripes seria: 
 el 5to byte esta en la segunda palabra (ya que los 4 bytes de la primera ya se "pasaron"), en el primer byte de la segunda palabra, o sea:
-1 01
+1 00. El primer 1 simboliza la segunda palabra (de las dos que integran la linea). 
 
-El inicio de la palabra "memoria" se ubicaria en la tercera línea con un offset 101
+El inicio de la palabra "memoria" se ubicaria en la tercera línea con un offset 100
 
 -----------------------------------------------------------------------------------------------------------
 
@@ -81,9 +81,11 @@ log2(16bytes) = 4 bits para el offset
 
 Contando desde el inicio hasta la "c" de "cache" (incluyendola), hay 29 caracteres o sea 29 bytes.
 29 / 16 = 1 linea completa
-Resto: 13 bytes en linea 2 (linea 2 representada en bits: 10)
+Resto: 13 bytes en segunda linea (linea 1 -> 01)
 
-Para representar el byte 13 en el offset seria: 1101 (o sea cuarta palabra, primer byte, es decir 11 01)
+13 / 4 = 3 (palabras). Resto 1 (byte de la cuarta palabra)
+
+Para representar el byte 13 en el offset seria: 11 00 (o sea cuarta palabra, primer byte, es decir 11 00)
 
 -----------------------------------------------------------------------------------------------------------
 
@@ -99,10 +101,12 @@ log2(4) = 2 bits para conjunto
 log2(8) = 3 bits para offset
 
 Contando desde el inicio hasta la "R" de "Ripes" (incluyendola), hay 38 caracteres o sea 38 bytes.
-38 bytes / 16 bytes = 2 conjuntos completos
-Resto: 6 bytes en conjunto 3 (conjunto 3 representado en bits: 11)
+38 bytes / 16 bytes = 2 conjuntos completos (en realidad son 4 medio conjuntos)
+Resto: 6 bytes en segunda línea de primer conjunto (conjunto 0 representado en bits: 00)
 
-Para representar el byte 6 en el offset seria: 110 (segunda palabra, segundo byte, o sea 1 10)
+Para representar el byte 6 en el offset seria: 101 (segunda palabra ya que 6 / 4 = 1 palabra completa; resto 2 -> segundo byte, o sea 1 01)
+
+Esto pensado así tiene sentido, pero en Ripes en realidad la "R" está en el cuarto byte de la cuarta palabra porque la é de la palabra "caché" es un caracter especial por el acento que ocupa dos bytes más, lo que hace que quede corrido en realidad.
 
 -----------------------------------------------------------------------------------------------------------
 
@@ -160,6 +164,7 @@ log2(16bytes) = 4 bits -> para palabra (offset)
 32 - (4 + 4) = 24 bits -> para etiqueta
 
 En la cache de instrucciones queda asi: 000000000000000000000000 0001 1100
+
 -----------------------------------------------------------------------------------------------------------
 
 6) Al finalizar la ejecución del ejercicio anterior que instrucciones queda cargadas en la línea 2 de la memoria caché de instrucciones con asignación asociativa 32 líneas 4 palabra por línea.
@@ -171,3 +176,45 @@ Palabra 1: ffc30313        addi x6 x6 -4
 Palabra 2: 0002a503        lw x10 0 x5
 Palabra 3: 00032583        lw x11 0 x6
 Palabra 4: 00b2a023        sw x11 0 x5
+
+-----------------------------------------------------------------------------------------------------------
+
+7) Al finalizar la ejecución del ejercicio 5 en qué línea de la memoria caché de datos queda cargado el valor 20 teniendo en cuenta asignación asociativa 32 líneas 4 palabra por línea, y en qué línea si fueran 2 palabras por línea.
+
+EL vector tiene 19 elementos, e intercambia los elementos entre si de forma que el elemento de pos 0 cambia con elemento de pos 18, el de pos 1 con pos 17 y asi sucesivamente.
+Cada elemento tiene 4 bytes (1 palabra)
+
+En el primer caso no queda cargado el valor 20 en ninguna linea al finalizar la ejecucion (no se por que).
+En el segundo caso queda en la sexta linea, primer palabra (tampoco se por que)
+
+PREGUNTAR
+
+-----------------------------------------------------------------------------------------------------------
+
+8) Indicar en que se modifica la configuración de la memoria caché en Ripes dependiendo si la escritura es inmediata o diferida (Write through vs write back), indique que sucede y justifique.
+
+En lineas generales (obtenido de ChatGPT):
+En el simulador Ripes, la configuración de la memoria caché se modifica dependiendo de si se elige la política de escritura inmediata (write-through) o la política de escritura diferida (write-back). Aquí tienes una descripción de cada una y cómo se modifica la configuración de la caché en consecuencia:
+
+- Escritura inmediata (Write-Through):
+
+En esta política, cuando se escribe en una ubicación de memoria que está en la caché, también se actualiza el valor correspondiente en la memoria principal de inmediato.
+En términos de la configuración de la caché en Ripes, esto significa que cada vez que hay una escritura en la caché, también se realiza una escritura simultánea en la memoria principal.
+Esta política garantiza que los datos en la memoria principal y en la caché estén siempre sincronizados, lo que reduce el riesgo de pérdida de datos en caso de fallo del sistema o apagado inesperado.
+Sin embargo, puede resultar en un rendimiento más bajo debido a la necesidad de escribir constantemente en la memoria principal, lo que puede generar cuellos de botella en el rendimiento, especialmente en sistemas con muchas escrituras.
+No existe el dirty bit, por eso mismo.
+
+- Escritura diferida (Write-Back):
+
+En esta política, las escrituras se realizan inicialmente en la caché. Luego, se actualiza el valor correspondiente en la memoria principal solo cuando se elimina el bloque de caché que contiene los datos modificados.
+En la configuración de la caché en Ripes, la diferencia es que en lugar de escribir inmediatamente en la memoria principal cuando se actualiza un valor en la caché, se marca el bloque de caché como "modificado" (por medio del dirty bit) y se posterga la escritura en la memoria principal hasta que el bloque sea reemplazado.
+Esto puede mejorar el rendimiento, ya que reduce la cantidad de accesos a la memoria principal, ya que muchas escrituras pueden agruparse y realizarse de manera más eficiente.
+Sin embargo, existe un riesgo de pérdida de datos en caso de fallo del sistema o apagado inesperado, ya que los datos pueden permanecer en la caché sin estar reflejados en la memoria principal.
+
+En resumen, la elección entre escritura inmediata y diferida en Ripes implica un compromiso entre consistencia de datos y rendimiento. La escritura inmediata garantiza la consistencia de datos pero puede reducir el rendimiento, mientras que la escritura diferida puede mejorar el rendimiento pero con un mayor riesgo de inconsistencia de datos en caso de fallos. La elección depende de los requisitos específicos de la aplicación y las consideraciones de rendimiento.
+
+
+
+
+
+
