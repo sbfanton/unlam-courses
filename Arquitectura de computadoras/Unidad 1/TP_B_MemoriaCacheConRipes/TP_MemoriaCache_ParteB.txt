@@ -59,16 +59,13 @@ Respuesta:
 2 palabras por linea = 2x4bytes = 8bytes por linea
 log2(8bytes) = 3 bits para el offset
 
-Contando desde el inicio hasta la "m" de "memoria" (incluyendola), hay 21 caracteres o sea 21 bytes.
-21 - 8 (de la primer fila) = 13
-13 - 8 (de la segunda fila) = 5 -> quedan 5 bytes en la tercer línea (sería la línea 2 -> 10, ya que se empieza desde línea 0 -> 00)
+Contando desde el inicio hasta la "m" de "memoria" (sin incluir la m), hay 20 caracteres o sea 20 bytes.
+20 - 8 (de la primer línea) = 12
+12 - 8 (de la segunda línea) = 4 -> quedan 4 bytes (1 palabra entera) en la tercer línea
+Tener en cuenta que este orden de las lineas lo damos en el contexto de este programa, en otros casos por ser asignación asociativa podria ser mas aleatoria ya que podrian ocupar cualquier linea
 
-Para representar el 5to byte en el offset sería: 100 
-Si lo imaginamos en el diagrama de la direccion en Ripes seria: 
-el 5to byte esta en la segunda palabra (ya que los 4 bytes de la primera ya se "pasaron"), en el primer byte de la segunda palabra, o sea:
-1 00. El primer 1 simboliza la segunda palabra (de las dos que integran la linea). 
-
-El inicio de la palabra "memoria" se ubicaria en la tercera línea con un offset 100
+Para representar el 4to byte en el offset sería: 100 
+El inicio de la palabra "memoria" se ubicaria con un offset de 4, (o bien con un offset 5 -> 101, si incluyéramos la m)
 
 -----------------------------------------------------------------------------------------------------------
 
@@ -79,13 +76,13 @@ Respuesta:
 4 palabras por linea = 4x4bytes = 16bytes por linea
 log2(16bytes) = 4 bits para el offset
 
-Contando desde el inicio hasta la "c" de "cache" (incluyendola), hay 29 caracteres o sea 29 bytes.
-29 / 16 = 1 linea completa
-Resto: 13 bytes en segunda linea (linea 1 -> 01)
+Contando desde el inicio hasta la "c" de "cache" (sin incluir la c), hay 28 caracteres o sea 28 bytes.
+28 / 16 = 1 linea completa 
+Resto: 12 bytes en otra línea (si fuera la segunda linea seria 01)
 
-13 / 4 = 3 (palabras). Resto 1 (byte de la cuarta palabra)
+12 / 4 = 3 (palabras)
 
-Para representar el byte 13 en el offset seria: 11 00 (o sea cuarta palabra, primer byte, es decir 11 00)
+El inicio de la palabra cache se encontrará con un offset de 12 (en binario: 1100). Si incluyeramos la letra c sería un offset de 13 (en binario: 1101)
 
 -----------------------------------------------------------------------------------------------------------
 
@@ -100,11 +97,11 @@ MC de 512 bits = 512 / 8 = 64 bytes de MC
 log2(4) = 2 bits para conjunto
 log2(8) = 3 bits para offset
 
-Contando desde el inicio hasta la "R" de "Ripes" (incluyendola), hay 38 caracteres o sea 38 bytes.
-38 bytes / 16 bytes = 2 conjuntos completos (en realidad son 4 medio conjuntos)
-Resto: 6 bytes en segunda línea de primer conjunto (conjunto 0 representado en bits: 00)
+Contando desde el inicio hasta la "R" de "Ripes" (sin incluir la R), hay 37 caracteres o sea 37 bytes.
+37 bytes / 16 bytes = 2 conjuntos completos (en realidad 4 medio conjuntos)
+Resto: 5 bytes en segunda línea de primer conjunto (conjunto 0 representado en bits: 00)
 
-Para representar el byte 6 en el offset seria: 101 (segunda palabra ya que 6 / 4 = 1 palabra completa; resto 2 -> segundo byte, o sea 1 01)
+Para representar el byte 5 en el offset seria: 101. Si incluyeramos la R el offset sería 6 (en binario: 110).
 
 Esto pensado así tiene sentido, pero en Ripes en realidad la "R" está en el cuarto byte de la cuarta palabra porque la é de la palabra "caché" es un caracter especial por el acento que ocupa dos bytes más, lo que hace que quede corrido en realidad.
 
@@ -137,7 +134,7 @@ Indique el formato y contenido de los campos de la caché de instrucciones, para
 
 Respuesta: (viendolo en Ripes)
 
-La instruccion en Ripes se encuentra en la direccion 0x0000001c, y la instruccion en si es la palabra 00b2a023
+La instruccion en Ripes se encuentra en la direccion 0x0000001c (28 en decimal), y la instruccion en si es la palabra 00b2a023
 
 ● Asignación asociativa: 
 32 lineas, 4 palabras por linea, 32 bits (4bytes) por palabra.
@@ -172,27 +169,31 @@ En la cache de instrucciones queda asi: 000000000000000000000000 0001 1100
 Respuesta: (viendo en Ripes)
 
 En la linea 2 quedan cargadas las siguientes instrucciones:
-Palabra 1: ffc30313        addi x6 x6 -4
-Palabra 2: 0002a503        lw x10 0 x5
-Palabra 3: 00032583        lw x11 0 x6
-Palabra 4: 00b2a023        sw x11 0 x5
+Palabra 1: ffc30313 (direccion 0x00000010)       addi x6 x6 -4
+Palabra 2: 0002a503 (direccion 0x00000014)       lw x10 0 x5
+Palabra 3: 00032583 (direccion 0x00000018)       lw x11 0 x6
+Palabra 4: 00b2a023 (direccion 0x0000001c)       sw x11 0 x5
+
+Lo cual tiene sentido, ya que estas 4 palabras constituyen el segundo bloque (línea) que se obtiene de la memoria de instrucciones para la memoria cache (el primer bloque es el que incluye las direcciones 0x00000000, 0x00000004, 0x00000008 y 0x0000000c)
 
 -----------------------------------------------------------------------------------------------------------
 
 7) Al finalizar la ejecución del ejercicio 5 en qué línea de la memoria caché de datos queda cargado el valor 20 teniendo en cuenta asignación asociativa 32 líneas 4 palabra por línea, y en qué línea si fueran 2 palabras por línea.
 
+Respuesta:
 EL vector tiene 19 elementos, e intercambia los elementos entre si de forma que el elemento de pos 0 cambia con elemento de pos 18, el de pos 1 con pos 17 y asi sucesivamente.
 Cada elemento tiene 4 bytes (1 palabra)
 
-En el primer caso no queda cargado el valor 20 en ninguna linea al finalizar la ejecucion (no se por que).
+En el primer caso no queda cargado el valor 20 en ninguna linea al finalizar la ejecucion, el lugar que ocupaba en primer lugar es reemplazado por el valor 8 cuando se produce el intercambio entre el 20 y el valor 8 (no se por que).
 En el segundo caso queda en la sexta linea, primer palabra (tampoco se por que)
 
-PREGUNTAR
+Tendra que ver el LRU, o alguna politica de reemplazo ¿?
 
 -----------------------------------------------------------------------------------------------------------
 
 8) Indicar en que se modifica la configuración de la memoria caché en Ripes dependiendo si la escritura es inmediata o diferida (Write through vs write back), indique que sucede y justifique.
 
+Respuesta:
 En lineas generales (obtenido de ChatGPT):
 En el simulador Ripes, la configuración de la memoria caché se modifica dependiendo de si se elige la política de escritura inmediata (write-through) o la política de escritura diferida (write-back). Aquí tienes una descripción de cada una y cómo se modifica la configuración de la caché en consecuencia:
 
@@ -202,7 +203,7 @@ En esta política, cuando se escribe en una ubicación de memoria que está en l
 En términos de la configuración de la caché en Ripes, esto significa que cada vez que hay una escritura en la caché, también se realiza una escritura simultánea en la memoria principal.
 Esta política garantiza que los datos en la memoria principal y en la caché estén siempre sincronizados, lo que reduce el riesgo de pérdida de datos en caso de fallo del sistema o apagado inesperado.
 Sin embargo, puede resultar en un rendimiento más bajo debido a la necesidad de escribir constantemente en la memoria principal, lo que puede generar cuellos de botella en el rendimiento, especialmente en sistemas con muchas escrituras.
-No existe el dirty bit, por eso mismo.
+No existe el dirty bit.
 
 - Escritura diferida (Write-Back):
 
@@ -213,8 +214,205 @@ Sin embargo, existe un riesgo de pérdida de datos en caso de fallo del sistema 
 
 En resumen, la elección entre escritura inmediata y diferida en Ripes implica un compromiso entre consistencia de datos y rendimiento. La escritura inmediata garantiza la consistencia de datos pero puede reducir el rendimiento, mientras que la escritura diferida puede mejorar el rendimiento pero con un mayor riesgo de inconsistencia de datos en caso de fallos. La elección depende de los requisitos específicos de la aplicación y las consideraciones de rendimiento.
 
+-----------------------------------------------------------------------------------------------------------
+
+9) Teniendo en cuenta el siguiente programa escrito en Ripes:
+
+.data
+vector: .word 1234, 5678, 3756, 2569
+final:
+
+.text
+la x12, vector
+la x13, final
+
+siguiente:
+  lw x5, 0(x12)
+  li x6, 10
+  li x7, 0
+
+loop:
+  sub x5, x5, x6
+  addi x7, x7, 1
+  bge x5, x6, loop
+  addi x5, x5, 0x30
+  add a0, x0, x5
+  addi a7, x0, 11
+  ecall
+  add x5, x0, x7
+  addi x7, x0, 0
+  bge x5, x6, loop
+
+addi x5, x5, 0x30
+add a0, x0, x5
+addi a7, x0, 11
+ecall
+addi x12, x12, 4
+bne x12, x13, siguiente
+
+fin:
+  beq x0, x0 fin
+
+Indique cuál sería la caché de instrucciones de menor tamaño, en cada una de los métodos de asignación, en el cual el programa anterior produce la
+menor cantidad de fallos posibles.
+
+Respuesta: 
+En primer lugar, este programa invierte cada numero del vector y lo imprime por pantalla (usando el metodo de las restas sucesivas de 10).
+
+SIN usar las configuraciones preseteadas de la MC de instrucciones:
+
+- Opción 1 (general para aplocar a cualquiera de las tres configuraciones):
+8 lineas, 4 palabras por linea. Numero de misses: 6
+Tam MC: 4 bytes (por palabra) x 4 x 8 = 128 bytes
+Observacion: de las 8 lineas se usan un total de 6
+6 lineas x 4 palabras = 24 palabras
+En esta caso no es necesario generar ningun reemplazo de linea, ya que este espacio alcanza para almacenar todas las instrucciones.
+
+- Opción 2: 
+4 líneas, 4 palabras por linea. Numero de misses: 12
+Tam MC: 4 bytes (por palabra) x 4 x 4 = 64 bytes
+
+- Opción 3:
+4 lineas, 8 palabras por linea. Numero de misses: 3
+Tam MC: 4 bytes x 8 x 4 = 128 bytes
+
+Mas alla de establecer especificamente para cada tipo de asignacion, en lineas generales la MC de 128 bytes, de 4 lineas y 8 palabras por líena es la que genera el menor numero de fallas.
 
 
+En cuanto a las configuraciones presetadas, todas presentan la misma cantidad de fallos, pero en cuanto tamaño sería conveniente usar la asociativa o la de asignación directa, ya que la asociativa por conjunto va ocupando la primer linea de cada conjunto, quedando lienas vacias de por medio.
+
+-----------------------------------------------------------------------------------------------------------
+
+10) Utilizando el programa del ejercicio B.09, si la caché de instrucciones está configurada con asignación directa 4 líneas y 2 palabra por línea,
+indique lo siguiente:
+● En qué línea y con qué offset se carga la instrucción sub x5,x5,x6 del programa.
+● Qué instrucciones se cargan en la línea 3 en el transcurso del programa
+
+Respuesta:
+
+2 palabras x linea = 4bytes x 2 = 8 bytes
+8 bytes x 4 = 32 bytes
+
+log2(8 bytes) = 3 bits para offset
+log2(4) = 2 bits para linea
+
+● La instruccion sub x5,x5,x6 (que es la palabra 0x406282b3, que se encuentra en la direccion de MP 0x0000001c)
+Se carga en primer lugar en la linea 4, segunda palabra.
+Es decir: 0x0000001c -> 000000000000000000000000000 11 100 -> lo que coincide porque 11 hace referencia a la linea 4, y 100 forma parte de la segunda palabra
+
+● En la línea 3 (representada como 10) se cargan en este orden:
+- 0x00062283, direccion 0x00000010 (lw x5 0 x12) y 0x00a00313, direccion 0x00000014 (addi x6 x0 10)
+- 0x00b00893, direccion 0x00000030 (addi x17 x0 11) y 0x00000073, direccion 0x00000034 (ecall)
+- 0x00000073, direccion 0x00000050 (ecall) y 0x00460613 direccion 0x00000054 (addi x12 x12 4)
+Esto es asi porque recordemos que en esta configuracion de 4 lineas, 2 palabras por linea, hay 8 bytes por linea.
+La memoria de instrucciones (en la memoria principal) empieza en la direccion 0x00000000. Las primeras dos lineas de la MC suman 16 bytes, es decir, lo que corresponde a las direcciones desde 0x00000000 a 0x0000000f. Entonces, la linea 3 corresponde a las dos direcciones subsiguientes: 
+0x00000010 y 0x00000014. La linea 4 corresponde a las direcciones 0x00000018 y 0x00001c. Y luego continua con las demas direcciones de MP pero comenzando nuevamente desde la linea 1.
+
+-----------------------------------------------------------------------------------------------------------
+
+11) Utilizando el programa del ejercicio B.09, si la caché de instrucciones está configurada con asignación asociativa por conjunto de 8 líneas y 2 vías de 2 palabra por línea, indique lo siguiente
+● Al momento de completarse por primera vez el conjunto 0 qué instrucciones se encuentran en dicho conjunto.
+● Indique cuántos fallos se producen al finalizar la ejecución del programa
+● Cómo podría mejorarlo, justificando su decisión
+
+8 / 2 = 4 conjuntos
+log2(4) = 2 bits para conjunto
+log2(2) = 1 bit para offset
+
+● Las instrucciones que se encuentran en el conjunto 0 al momento de completarse por primera vez dicho conjunto son:
+Primer linea: 0x10000617 (direccion 0x00000000) y 0x00060613 (direccion 0x00000004)
+Segunda linea: 0x00138393 (direccion 0x00000020) y 0xfe62dce3 (direccion 0x00000024)
+
+Lo de la primer linea tiene sentido ya que la memoria de instrucciones en MP empieza en la direccion 0x00000000, y siendo la primer linea del primer conjunto se completa con las dos primeras palabras de dicha memoria principal de MP.
+Lo de la segunda linea tambien tiene sentido ya que en primer lugar se van ocupando la primer linea de cada conjunto, y una vez completas ahi comienzan a completarse la segunda linea de cada conjunto. Siendo 4 lineas las primeras en completarse, 8 x 4 = 32 bytes, que van de la direccion 0x00000000 a la 0x0000001f. Con lo cual la segunda linea del primer conjunto se empieza a llenar con lo que hay en la direccion 0x00000020.
+
+● Al finalizar la ejecución del programa se producen 30 fallos
+
+● Una forma de mejorar esta performance en el sentido de que se produzcan menos fallos es:
+- Opcion 1: incrementando la cantidad de palabras por linea de 2 a 4, de esta forma los fallos solo se reducen a 6 ya que se evita que se deban reemplazar bloques tan frecuentemente por tener un mayor tamaño los bloques que se traen desde la MP a MC, lo que asegura que ya se encuentren en MC mas instrucciones disponibles, incluso aunque se termine incrementando el tamaño de la misma.
+- Opcion 2: se podria incrementar la cantidad de lineas por conjunto, manteniendo 2 palabras por linea, pero esto solo reduce la cantidad de fallas a 12, que sigue siendo mas alto que la opcion 1.
+
+-----------------------------------------------------------------------------------------------------------
+
+12) Escriba un programa en C que implemente varias funciones que reciban distintos argumentos (valores enteros signados). Ej: una función que reciba 4 elementos y retorne el promedio, otra que reciba 3 elementos y retorne la suma, etc. Asegúrese de declarar variables locales dentro de cada función. Analice el impacto que tiene la utilización del stack pointer y el frame pointer para almacenar las variables locales en la eficiencia de la memoria caché. Realice este análisis para configuraciones en mapeo directo y mapeo asociativo.
+
+Código implementado:
+int getPromedio(int,int,int,int);
+int getSuma(int,int,int);
+int getResta(int,int);
+
+void main() {
+    
+    int num1 = 12,
+        num2 = 3,
+        num3 = 9,
+        num4 = 6;
+        
+    int prom = getPromedio(num1,num2,num3,num4);
+    int suma = getSuma(num1,num3,num4);
+    int resta = getResta(num2,num3);
+}
+
+int getPromedio(int num1, int num2, int num3, int num4) {
+    int suma = num1 + num2 + num3 + num4;
+    int promedio = (int) suma / 4;
+    return promedio;
+}
+
+int getSuma(int num1, int num2, int num3) {
+    int suma = num1 + num2 + num3;    
+    return suma;
+}
+
+int getResta(int num1, int num2) {
+    int resta = num1 - num2;
+    return resta;
+}
 
 
+Tanto para el caso de asignacion asociativa como para el caso de asignacion por mapeo directo (con las configuraciones preseteadas) el numero de fallos es el siguiente:
+MC de instrucciones: 24 fallos, hit rate de 73,33% (bastante malo)
+MC de datos: 6 fallos, hit rate: 88,46%
+Esos numeros pueden mejorarse incrementando por ejemplo la cantidad de palabras por linea, pero aun asi seguimos teniendo una cantidad de fallos de 2 digitos.
 
+
+Respuesta (con ayuda de ChatGPT):
+
+Para analizar el impacto del stack pointer y el frame pointer en la eficiencia de la memoria caché en configuraciones de mapeo directo y mapeo asociativo, primero debemos comprender qué son estos elementos y cómo interactúan con la memoria caché.
+
+El stack pointer (SP) es un registro de la CPU que apunta al tope del stack, que es una región de la memoria utilizada para almacenar variables locales y registros de activación de funciones. El frame pointer (FP), por otro lado, es un puntero utilizado para acceder a los registros de activación de funciones dentro del stack. Estos registros de activación contienen variables locales y otros datos necesarios para la ejecución de la función.
+
+En una configuración de mapeo directo de la caché, cada bloque de memoria se asigna a un conjunto específico en la caché. Cuando se accede a una dirección de memoria, la caché determina qué conjunto contiene la dirección y guarda o lee el bloque correspondiente en ese conjunto. Si la memoria que se accede es parte de un bloque en caché, se produce un acierto en caché, lo que significa que la operación se realiza más rápidamente. De lo contrario, si el bloque no está en caché, se produce un fallo en caché y se debe recuperar desde la memoria principal.
+
+En una configuración de mapeo asociativo, cada bloque de memoria puede asignarse a cualquier conjunto en la caché. Esto permite una mayor flexibilidad en la asignación de bloques de memoria a conjuntos, lo que puede reducir el número de fallos en caché.
+
+Ahora, en cuanto al impacto en la eficiencia de la memoria caché en el código proporcionado:
+
+- Variables locales y punteros de pila: Las variables locales y los registros de activación de funciones se almacenan en el stack. El uso intensivo de variables locales y llamadas a funciones puede resultar en un mayor uso del stack, lo que puede llevar a más fallos en caché si los bloques de memoria que contienen las variables locales no están en caché.
+
+- Acceso a variables locales: Al acceder a las variables locales, como se hace en las funciones getPromedio, getSuma y getResta, se puede generar tráfico de memoria si las variables no están en caché. Esto puede afectar el rendimiento de manera significativa, especialmente en configuraciones de mapeo directo donde la asignación de bloques de memoria es menos flexible.
+
+- Recursión y anidamiento de funciones: Si el código incluye llamadas recursivas o funciones anidadas, puede haber una mayor presión sobre el stack y, por lo tanto, más fallos en caché si los bloques de memoria asociados con los registros de activación de estas funciones no están en caché.
+
+En resumen, el uso de variables locales y punteros de pila en el código puede afectar la eficiencia de la memoria caché, especialmente en configuraciones de mapeo directo donde la asignación de bloques de memoria es menos flexible. Las llamadas a funciones y el acceso a variables locales pueden generar tráfico de memoria y aumentar la cantidad de fallos en caché si los bloques de memoria asociados no están en caché. En configuraciones de mapeo asociativo, la flexibilidad en la asignación de bloques de memoria puede ayudar a reducir el número de fallos en caché, pero aún así, el uso intensivo de variables locales y punteros de pila puede afectar el rendimiento de la caché.
+
+Para mejorar la situación en ambos casos (mapeo directo y mapeo asociativo) y mitigar el impacto en la eficiencia de la memoria caché debido al uso intensivo de variables locales y punteros de pila, se pueden considerar las siguientes estrategias:
+
+*** Optimización del uso de variables locales: ***
+
+- Reducir el alcance de las variables locales: Declarar variables locales solo cuando sean necesarias y limitar su alcance tanto como sea posible. Esto ayuda a reducir la cantidad de espacio en el stack utilizado.
+Reutilizar variables: Si una variable local ya no es necesaria, considerar reutilizarla en lugar de declarar una nueva. Esto puede reducir la cantidad total de variables locales en el stack.
+Minimizar el tamaño de las estructuras de datos locales: Si es posible, utilizar tipos de datos más pequeños para variables locales, especialmente si no se requiere un rango completo de valores.
+Optimización del acceso a variables locales:
+
+- Localidad temporal: Intentar acceder a las variables locales de manera que se aproveche la localidad temporal, es decir, acceder a las variables locales que se han utilizado recientemente y es más probable que estén en caché.
+Evitar accesos a memoria innecesarios: Minimizar la cantidad de accesos a memoria para variables locales mediante el almacenamiento en registros cuando sea posible.
+Optimización de llamadas a funciones:
+
+- Inlining de funciones pequeñas: Para funciones pequeñas, el compilador puede considerar inlining, que es una técnica en la que el código de la función se coloca directamente en el lugar donde se llama, eliminando así la sobrecarga de la llamada a la función.
+Reducir la profundidad de la recursión: Si se utiliza la recursión, intentar reducir la profundidad de la misma, ya que una profundidad excesiva puede aumentar la cantidad de registros de activación en el stack y, por lo tanto, la cantidad de fallos en caché.
+Optimización de la configuración de la caché:
+
+- Tamaño de bloque de caché adecuado: Elegir un tamaño de bloque de caché que se ajuste mejor al tamaño medio de los bloques de memoria utilizados por el programa puede ayudar a reducir la cantidad de fallos en caché.
+Política de reemplazo de caché adecuada: Elegir una política de reemplazo de caché que minimice la cantidad de fallos en caché, como la política LRU (Least Recently Used), puede ser beneficioso.
+Al implementar estas estrategias, se puede mejorar la eficiencia de la memoria caché tanto en configuraciones de mapeo directo como en mapeo asociativo, reduciendo así el impacto negativo del uso intensivo de variables locales y punteros de pila en el rendimiento del programa.
