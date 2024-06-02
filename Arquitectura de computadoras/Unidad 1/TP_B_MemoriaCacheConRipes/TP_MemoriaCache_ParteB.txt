@@ -56,33 +56,42 @@ log2(16bytes) = 4 bits -> para palabra (offset)
 2) Teniendo en cuenta direcciones de 32 bits, una asignación asociativa de 4 líneas y dos palabras por línea, en que línea y con cual offset se ubicaría el inicio de la palabra “memoria” del ejercicio anterior.
 
 Respuesta: 
+En primer lugar, tengamos en cuenta que las direcciones de MP para datos en Ripes comienza en la direccion 0x10000000.
+
 2 palabras por linea = 2x4bytes = 8bytes por linea
 log2(8bytes) = 3 bits para el offset
 
-Contando desde el inicio hasta la "m" de "memoria" (sin incluir la m), hay 20 caracteres o sea 20 bytes.
-20 - 8 (de la primer línea) = 12
-12 - 8 (de la segunda línea) = 4 -> quedan 4 bytes (1 palabra entera) en la tercer línea
-Tener en cuenta que este orden de las lineas lo damos en el contexto de este programa, en otros casos por ser asignación asociativa podria ser mas aleatoria ya que podrian ocupar cualquier linea
+Contando desde el inicio hasta la "m" de "memoria" (sin incluir la m), hay 20 caracteres o sea 20 bytes. La "m" se encuentra en la posicion de MP 0x10000014, lo cual tiene sentido ya que 20 en hexa es 14. Entonces 0x10000000 + 0x14 = 0x10000014.
+0x10000014 en binario (usando los 32 bits del direccionamiento de la memoria) = 10000000000000000000000000010 100 -> offset 100 = 4 (4 en decimal)
+
+Si llegamos a eso por otro camino:
+20 - 8 (en una primera linea, cualquiera sea por ser asociativa) = 12
+12 - 8 (en una segunda línea, cualquiera sea por ser asociativa) = 4 -> quedan 4 bytes (1 palabra entera) en la tercer línea, cualquiera sea esta.
 
 Para representar el 4to byte en el offset sería: 100 
-El inicio de la palabra "memoria" se ubicaria con un offset de 4, (o bien con un offset 5 -> 101, si incluyéramos la m)
+El inicio de la palabra "memoria" se ubicaria con un offset de 4
 
 -----------------------------------------------------------------------------------------------------------
 
 3) Teniendo en cuenta direcciones de 32 bits, una asignación directa de 4 líneas y cuatro palabras por línea, en que línea y con cual offset se ubicaría el inicio de la palabra “cache” del ejercicio anterior.
 
 Respuesta:
+En primer lugar, tengamos en cuenta que las direcciones de MP para datos en Ripes comienza en la direccion 0x10000000.
+
 4 lineas -> log2(4) = 2 bits para linea
 4 palabras por linea = 4x4bytes = 16bytes por linea
 log2(16bytes) = 4 bits para el offset
 
-Contando desde el inicio hasta la "c" de "cache" (sin incluir la c), hay 28 caracteres o sea 28 bytes.
-28 / 16 = 1 linea completa 
-Resto: 12 bytes en otra línea (si fuera la segunda linea seria 01)
+Contando desde el inicio hasta la "c" de "cache" (sin incluir la c), hay 28 caracteres o sea 28 bytes. La "c" se ubica en la direccion de MP 0x1000001c, lo cual tiene sentido ya que 28 en hexa es 1c. Entonces 0x10000000 + 0x1c = 0x1000001c.
+0x1000001c en binario (usando los 32 bits del direccionamiento de la memoria) = 10000000000000000000000000 01 1100 -> linea 01 = 1, offset 1100 = c (12 en decimal)
 
-12 / 4 = 3 (palabras)
+Si llegamos a eso por otro camino:
+28 / 16 = 1 linea completa (linea 0)
+Resto: 12 bytes en otra línea (linea 1)
 
-El inicio de la palabra cache se encontrará con un offset de 12 (en binario: 1100). Si incluyeramos la letra c sería un offset de 13 (en binario: 1101)
+12 / 4 = 3 (palabras) en linea 1
+
+El inicio de la palabra cache se encontrará con un offset de 12 (en binario: 1100)
 
 -----------------------------------------------------------------------------------------------------------
 
@@ -98,12 +107,14 @@ log2(4) = 2 bits para conjunto
 log2(8) = 3 bits para offset
 
 Contando desde el inicio hasta la "R" de "Ripes" (sin incluir la R), hay 37 caracteres o sea 37 bytes.
-37 bytes / 16 bytes = 2 conjuntos completos (en realidad 4 medio conjuntos)
-Resto: 5 bytes en segunda línea de primer conjunto (conjunto 0 representado en bits: 00)
+Pero teniendo en cuenta que hay un caracter en la frase que tiene un acento, ese caracter especial hace que ocupe mas de un byte, asi que debemos fijarnos en que posicion de memoria se encuentra la "R". Dicha posicion de memoria en MP es 0x10000027. 27 en decimal es 39. Es decir, desde el inicio de la palabra hasta la R hay 39 bytes.
+0x10000027 en binario (usando los 32 bits del direccionamiento de la memoria) = 100000000000000000000000001 00 111 -> conjunto 00 = 0, offset 111 = 7 (7 en decimal)
 
-Para representar el byte 5 en el offset seria: 101. Si incluyeramos la R el offset sería 6 (en binario: 110).
+Si llegamos a eso por otro camino:
+39 bytes / 16 bytes = 2 conjuntos completos (en realidad 4 medio conjuntos)
+Resto: 7 bytes en segunda línea de primer conjunto (conjunto 0 representado en bits: 00)
 
-Esto pensado así tiene sentido, pero en Ripes en realidad la "R" está en el cuarto byte de la cuarta palabra porque la é de la palabra "caché" es un caracter especial por el acento que ocupa dos bytes más, lo que hace que quede corrido en realidad.
+Para representar el byte 7 en el offset seria: 111
 
 -----------------------------------------------------------------------------------------------------------
 
@@ -164,17 +175,19 @@ En la cache de instrucciones queda asi: 000000000000000000000000 0001 1100
 
 -----------------------------------------------------------------------------------------------------------
 
-6) Al finalizar la ejecución del ejercicio anterior que instrucciones queda cargadas en la línea 2 de la memoria caché de instrucciones con asignación asociativa 32 líneas 4 palabra por línea.
+6) Al finalizar la ejecución del ejercicio anterior que instrucciones queda cargadas en la línea 2 (en binario = 10) de la memoria caché de instrucciones con asignación asociativa 32 líneas 4 palabra por línea.
 
 Respuesta: (viendo en Ripes)
 
 En la linea 2 quedan cargadas las siguientes instrucciones:
-Palabra 1: ffc30313 (direccion 0x00000010)       addi x6 x6 -4
-Palabra 2: 0002a503 (direccion 0x00000014)       lw x10 0 x5
-Palabra 3: 00032583 (direccion 0x00000018)       lw x11 0 x6
-Palabra 4: 00b2a023 (direccion 0x0000001c)       sw x11 0 x5
+Palabra 1: 00a32023   sw x10 0 x6
+Palabra 2: 00428293   addi x5 x5 4
+Palabra 3: ffc30313   addi x6 x6 -4
+Palabra 4: fe5354e3   bge x6 x5 -24 (invertir)
 
-Lo cual tiene sentido, ya que estas 4 palabras constituyen el segundo bloque (línea) que se obtiene de la memoria de instrucciones para la memoria cache (el primer bloque es el que incluye las direcciones 0x00000000, 0x00000004, 0x00000008 y 0x0000000c)
+La palabra 1 se encuentra a partir de dir = 0x00000020
+
+Lo cual tiene sentido, ya que estas 4 palabras constituyen el tercer bloque (línea 2) que se obtiene de la memoria de instrucciones para la memoria cache (el primer bloque es el que incluye las direcciones 0x00000000, 0x00000004, 0x00000008 y 0x0000000c; y el segundo bloque es el que incluye las direcciones  0x00000010, 0x00000014, 0x00000018 y 0x0000001c)
 
 -----------------------------------------------------------------------------------------------------------
 
@@ -297,16 +310,16 @@ log2(8 bytes) = 3 bits para offset
 log2(4) = 2 bits para linea
 
 ● La instruccion sub x5,x5,x6 (que es la palabra 0x406282b3, que se encuentra en la direccion de MP 0x0000001c)
-Se carga en primer lugar en la linea 4, segunda palabra.
-Es decir: 0x0000001c -> 000000000000000000000000000 11 100 -> lo que coincide porque 11 hace referencia a la linea 4, y 100 forma parte de la segunda palabra
+Es decir: 0x0000001c -> 000000000000000000000000000 11 100 -> 11 hace referencia a la linea 3, y 100 es offset 4
 
-● En la línea 3 (representada como 10) se cargan en este orden:
-- 0x00062283, direccion 0x00000010 (lw x5 0 x12) y 0x00a00313, direccion 0x00000014 (addi x6 x0 10)
-- 0x00b00893, direccion 0x00000030 (addi x17 x0 11) y 0x00000073, direccion 0x00000034 (ecall)
-- 0x00000073, direccion 0x00000050 (ecall) y 0x00460613 direccion 0x00000054 (addi x12 x12 4)
+● En la línea 3 (representada como 11) se van cargando alternadamente:
+- 0x00000393 direccion 0x00000018 (addi x7 x0 0) y 0x406282b3 direccion 0x0000001c (sub x5 x5 x6)
+- 0x007002b3 direccion 0x00000038 (add x5 x0 x7) y 0x00000393 direccion 0x0000003c (add x7 x0 0)
+- 0xfad61ce3 direccion 0x00000058 (bne x12 x13 -72 <siguiente>) y 0x00000063 direccion 0x0000005c (beq x0 x0 0 <fin>)
 Esto es asi porque recordemos que en esta configuracion de 4 lineas, 2 palabras por linea, hay 8 bytes por linea.
-La memoria de instrucciones (en la memoria principal) empieza en la direccion 0x00000000. Las primeras dos lineas de la MC suman 16 bytes, es decir, lo que corresponde a las direcciones desde 0x00000000 a 0x0000000f. Entonces, la linea 3 corresponde a las dos direcciones subsiguientes: 
-0x00000010 y 0x00000014. La linea 4 corresponde a las direcciones 0x00000018 y 0x00001c. Y luego continua con las demas direcciones de MP pero comenzando nuevamente desde la linea 1.
+La memoria de instrucciones (en la memoria principal) empieza en la direccion 0x00000000. Las primeras tres lineas (linea 0 a linea 2) de la MC corresponden a las direcciones desde 0x00000000 a 0x00000014. Entonces, la linea 3 corresponde a las dos direcciones subsiguientes: 0x00000018 y 0x0000001c. 
+Esto mismo comienza nuevamente con la linea 0, hasta llegar a las direcciones 0x00000038 y 0x0000003c, y asi sucesivamente.
+Es decir, cada 24 bytes (ya que si las lineas 0 a 2 quedan ocupadas, y para llegar a la linea 3 suman 8 x 3 = 24 bytes), la linea 3 se ocupara con el contenido del par de direcciones de memoria correspondientes.
 
 -----------------------------------------------------------------------------------------------------------
 
