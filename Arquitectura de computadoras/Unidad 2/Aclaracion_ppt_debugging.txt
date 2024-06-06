@@ -1,0 +1,3 @@
+Aclaracion ppt Unidad 2 Debugging_1.
+
+Segun el video de esa clase, solo las diapositivas que estan marcadas con la banda roja en la esquina superior derecha son plausibles de ser evaluadas en el parcial. El resto de la presentacion a es a titulo informativo para conocer los distintos microcontroladores del mercado (en 2023)

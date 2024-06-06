@@ -1,0 +1,22 @@
+********** IDF - Comandos **********
+
+1) Luego de haber instalado el IDF, hacer doble click en el acceso al IDF por linea de comandos de Windows (NO Powershell)
+
+2) idf.py create-project HolaMundo (para crear proyecto)
+
+3) cd HolaMundo
+
+4) idf.py set-target esp32c3
+
+5) idf.py menuconfig (para desactivar el watchdog - ver capturas). Al terminar Esc para salir y Y para guardar
+
+6) Editar el archivo .c del main con el codigo correspondiente a lo que se desee hacer.
+
+7) idf.py build (para compilar)
+
+8) idf.py flash
+
+En ese ejemplo en particular del video, se muestra una placa (protoboard) que se conecta por usb a la compu y con este programa hace que titile un led en forma continua.
+
+Los ultimos dos pasos no los hice por falta del codigo de ejemplo
+

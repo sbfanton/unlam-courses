@@ -1,0 +1,26 @@
+Unidad de Entrada/Salida
+
+Dicha unidad incluye tanto las interfaces de E/S (que se conectan con la CPU a traves de los buses) como los dispositivos de E/S que son aquellos que conectan elementos como los perifericos y almacenamiento secundario (disco rigido, etc) a las interfaces de E/S
+
+Interfaces las hay genericas (que pueden permitir conectar distintos dispositivos de E/S por ej el caso de un puerto serie o un puerto USB), y las hay dedicadas (que conectan un tipo de dispositivo en particular, ej un puerto HDMI que es para conectar dispositivos relacionados a videos)
+
+Dispositivos los hay dedicados a caracter y dispositivos orientados a bloque
+Los dedicados a caracter son los dispositivos que transmiten los datos hacia los perifericos o reciben los datos de a un caracter (por ej, valores ASCII, de 8 bits). Son dispositivos mas antiguos que estan dejando de existir en la industria. La tecnologia actual trabaja por bloques, transmitiendo y recibiendo los datos por grupos de bytes.
+
+Las interfaces de E/S son necesarias como intermediarias entre los dispositivos de E/S y la CPU por distintos motivos. Entre ellos adecuar las velocidades, que la tranferencia de datos hacia la CPU sea uniforme sin importar el dispositivo, permitir transferencias desde y hacia dispositivos asincronicos (ej, teclados, que cuando uno escribe en ellos no lo hace regido por un mecanismo de clock que es como los datos viajan en el interior de la CPU).
+Las interfaces a su vez cumplen funciones varias (ver ppt), siendo una de ellas el almacenamiento temporal de los datos, el cual menciono porque este concepto hace referencia a los buffer. Es como si se acumularan en un buffer los datos y la interfaz los va transmitiendo en un flujo ordenado hacia la CPU (pensar en el concepto de un embudo).
+
+Existen estructuras de 3 buses y 4 buses en cuanto a lo que es el mapeo de E/S
+La de 3 buses implica que en memoria principal habra un espacio dedicado a direccionamiento para las interfaces de E/S, que recibira las direcciones especificadas por la CPU y luego remitira a la interfaz de E/S correspondiente. 
+La de 4 buses en cambio implica que habra un bus especifico para direccionamiento de E/S que saldra de la CPU y se conectara directamente con la unidad de E/S, sin pasar por la memoria principal.
+Tener en cuenta que aunque estemos hablando de 4 buses en realidad eran 4 buses logicos, pues fisicamente seguian siendo 3 buses pero mediante el bus de control la CPU indica si se trata de una lectura/escritura para MP o para E/S.
+En el caso de RISC-V utiliza la estructura de 3 buses, entre otras cosas porque permite utilizar las mismas intrucciones para MP que para E/S.
+
+Cada interfaz tiene una direccion base. Esta es la identidad de la interfaz, es unico por interfaz.
+Basandome en el diagrama simplificado de lo que es un interfaz para entender tambien el concepto de direccion base, vendria a ser algo como esto:
+Tenemos por un lado el bus de direcciones, el de datos y el de control. El bus de direcciones esta conectado a un registro buffer que esta dentro de la interfaz y el de datos esta conectado a otro registro buffer tambien dentro de la interfaz. En ambos casos el registro buffer sirve para almacenar temporalmente en el caso del bus de direcciones la ultima direccion que se encuentra en dicho bus, y en el caso del bus de datos el ultimo dato que sale de la interfaz de E/S o bien el ultimo dato que ingresa.
+La direccion que se encuentre almacenada en el registro buffer conectado al bus de direcciones se compara contra un comparador contra otro registro interno (registro de direccionamiento base) de la interfaz que es el que contiene la famosa direccion base. Dicha direccion base no es otra cosa que una direccion en la que se encuentran representados los bits mas significativos que comparten y son comunes a otros registros dentro de la interfaz. Si el comparador comprueba que la direccion que esta en el registro buffer en sus bits mas significativos coincide con el registro de direccionamiento base entonces eso significa que la CPU ordeno interactuar con esa interfaz de E/S en particular, ya sea para recibir datos de un dispositivo, enviar datos a dicho dispositivo, recibir un estado del dispositivo (ej una impresora que indica que falta papel, o esta sin tinta), o bien para enviar una señal de control al dispositivo. Luego de la comparacion, esto se hace a traves de un decodificador interno de la interfaz y con otros registros que poseen dicha direccion base en sus bits mas significativos pero que varian en los bits menos significativos (ver diagrama para entender mejor). Uno de ellos tendra la direccion correspondiente que provino del bus de direcciones, enviada por la CPU desde el MAR (memory access register).
+
+
+
+
