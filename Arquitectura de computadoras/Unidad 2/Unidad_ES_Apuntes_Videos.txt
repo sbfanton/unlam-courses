@@ -21,6 +21,38 @@ Basandome en el diagrama simplificado de lo que es un interfaz para entender tam
 Tenemos por un lado el bus de direcciones, el de datos y el de control. El bus de direcciones esta conectado a un registro buffer que esta dentro de la interfaz y el de datos esta conectado a otro registro buffer tambien dentro de la interfaz. En ambos casos el registro buffer sirve para almacenar temporalmente en el caso del bus de direcciones la ultima direccion que se encuentra en dicho bus, y en el caso del bus de datos el ultimo dato que sale de la interfaz de E/S o bien el ultimo dato que ingresa.
 La direccion que se encuentre almacenada en el registro buffer conectado al bus de direcciones se compara contra un comparador contra otro registro interno (registro de direccionamiento base) de la interfaz que es el que contiene la famosa direccion base. Dicha direccion base no es otra cosa que una direccion en la que se encuentran representados los bits mas significativos que comparten y son comunes a otros registros dentro de la interfaz. Si el comparador comprueba que la direccion que esta en el registro buffer en sus bits mas significativos coincide con el registro de direccionamiento base entonces eso significa que la CPU ordeno interactuar con esa interfaz de E/S en particular, ya sea para recibir datos de un dispositivo, enviar datos a dicho dispositivo, recibir un estado del dispositivo (ej una impresora que indica que falta papel, o esta sin tinta), o bien para enviar una señal de control al dispositivo. Luego de la comparacion, esto se hace a traves de un decodificador interno de la interfaz y con otros registros que poseen dicha direccion base en sus bits mas significativos pero que varian en los bits menos significativos (ver diagrama para entender mejor). Uno de ellos tendra la direccion correspondiente que provino del bus de direcciones, enviada por la CPU desde el MAR (memory access register).
 
+Independientemente si se trata de una estructura de 3 buses o 4 buses, las interfaces siempre se mapean, es decir, para la CPU la comunicacion con las interfaces se va a realizar por medio de direccionamientos. Si es una estructura de 3 buses, formara parte de los direccionamientos de memoria, y si es de 4 buses, formara parte de un direccionamiento independiente.
+
+La transferencia de datos entre interfaces y CPU puede ser sincronica (comparten reloj, o señales de clocks) o asincronica (cada interfaz puede operar a su propia velocidad sin importar la velocidad de otras interfaces sobre el mismo bus). Esta ultima es mas compleja, por eso la mayoria de las computadoras modernas utilizan la sincronica.
+
+Lo ideal es que en lo que son las interfaces de E/S exista la menor latencia posible, la mayor cantidad de IOPs (operaciones de entrada/salida por segundo) y el mayor throughout. Este ultimo esta relacionado con el ancho de banda y debemos pensarlo de esta manera: supongamos la Gral Paz cuya velocidad maxima es de 80 km/h (eso seria el ancho de banda, el maximo teorico de transferencia), pero en la realidad un lunes a la mañana no se alcanza esa velocidad por el flujo de vehiculos que se da a esa hora, la velocidad que se alcanza es menor. Esa velocidad real es lo que vendria a ser el throughput.
+
+Tipos de administracion de entrada/salida:
+
+- Polling (se hace por software):
+Verifica en forma constante el estado de la interfaz, si por algun motivo la interfaz requiere atencion segun lo que arroje el registro de control, se atendera y luego se volvera al polling constante de consultas del estado.
+Al ser por software es mas flexible, pero tambien hace que la CPU deba estar continuamente "preguntando" por el estado de las interfaces.
+Segun el caso, cuando hay mas de una interfaz involucrada, se puede decidir como se maneja esto. Si se pregunta por el estado de una interfaz, se detecta que se debe atender o ejecutar una subrutina de acuerdo a un estado, una vez concluida dicha "atencion" se puede decidir por software si se reiniciara el ciclo consultando por el estado de cada interfaz de nuevo desde el principio, o si se continuara preguntando por el estado de la interfaz siguiente.
+
+- Interrupciones (se hace por hardware):
+Tiene la gran ventaja de que la CPU no tiene que estar preguntando todo el tiempo por el estado de las interfaces. 
+Pensemo como si fuera un mozo, que se acerca a la mesa de los comensales cuando estos requieren de su asistencia, para lo cual interrumpe lo que estaba haciendo antes para atender a los clientes.
+Ahora la CPU tendra una señal extra en el bus de control (es decir, hardware) para operar de esta manera. Interrumpe lo que estaba ejecutando, dejando los registros como estan, cambiando el PC apuntando a la subrutina encargada de atender la peticion de interrupcion (ISR), y cuando termina con eso, retoma todo donde lo dejo.
+Todas las interrupciones son asincronicas porque no podemos predecir el momento en que se produciran ni determinarlo nosotros (cuando se orpime una tecla, se conecta un neuvo dispositivo, etc). 
+Las hay de dos tipos: IRQ (interrupciones que se pueden ignorar de momento y atender despues) y NMI (interrupciones no enmascarables, es decir, que no se pueden ignorar momentaneamente ni postergar). Ej de esta ultima puede ser cuando se interrumpe el suministro electrico y la computadora tiene que decidir y actuar rapidamente para intentar salvaguardar lo ultimo que se estaba trabajando antes de quedarse sin energia por completo.
+Ambas son señales que recibira la CPU por el bus de control.
+Tener en cuenta que igual la verificacion de que exista alguna IRQ la CPU lo hace justo antes de ejecutarse una instruccion (no durante, ya que en ese caso no interrumpiria dicha ejecucion).
+Ahora bien, como sabe la CPU al momento de recibir una IRQ de que interfaz provino?
+Puede ser que cada interfaz tenga su propia linea de control para transmitir la IRQ, entonces ahi la CPU sabe claramente cual fue la interfaz que la origino, pero esto no es tan facil de implementar.
+Otra posibilidad es que exita una linea compartida por todas las interfaces para transmitir la IRQ a la CPU, en cuyo caso esta ultima debe averiguar cual fue la interfaz que se la envio. Para ello puede solo entonces, cuando recibe la IRQ, hacer una especie de polling hasta saber cual fue. O bien comunicacion encadenada (en esta materia no se ve). O bien un circuito programable de instrucciones que tiene una unica conexion con la CPU y una conexion por interfaz (el famoso PIC). O bien una interrupcion vectorizada, que implica que en el momento en que la CPU recibe la IRQ, envia una señal para que la interfaz que la origino responda por ej con un vector de datos para identificarla.
+
+- DMA (Acceso directo a memoria):
+es una tecnica que va a permitir transferir datos desde memoria principal hacia interfaces y viceversa, evitando asi que por ej un dato que viene desde una interfaz que debe guardarse en memoria deba pasar primero por la CPU y de la CPU a memoria.
+Para esto habra una interfaz dedicada a esta tarea. CPU se hace a un costado y no hace de intermediaria.
+Es un metodo muy rapido. Pero esto no trabaja como una interrupcion, ya que la CPU no realiza ningun cambio, le cede los buses al DMA controller.
+Para DMA hay dos tecnicas: detencion de CPU (por un periodo muy corto de tiempo mientras se desconecta la misma de los buses y el controller ejecuta su funcion, se transfieren bloque grandes de datos por rafagas) y robo de ciclos (el controller utiliza semiciclos de la CPU que la misma no esta usando los buses para realizar su trabajo, ralentizando un poquito los ciclos de la CPU para ello).
+
+
 
 
 
