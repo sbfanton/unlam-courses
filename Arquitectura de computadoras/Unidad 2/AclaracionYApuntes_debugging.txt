@@ -1,0 +1,26 @@
+Aclaracion ppt Unidad 2 Debugging_1.
+
+Segun el video de esa clase, solo las diapositivas que estan marcadas con la banda roja en la esquina superior derecha son plausibles de ser evaluadas en el parcial. El resto de la presentacion a es a titulo informativo para conocer los distintos microcontroladores del mercado (en 2023), como asi tambien los metodos en la practica para flashear y debuggear usando ESP-IDF programas para el micro esp32c3, que es el que posee la arquitectura RISC-V.
+
+Una excepcion es un evento inusual, no esperado, que se da cuando se esta ejecutando una instruccion, pero el evento se origina a raiz de algo que ocurrio en la propia instruccion.
+Una interrupcion, en cambio, es totalmente externo a la ejecucion de un programa, y es asincronico porque no sabemos en que momento llega.
+Tanto en el caso de una excepcion como de una interrupcion (atendida) RISC-V atrapa (trap, similar al concepto de catch en Java por ej) la misma para una rutina de la CPU para que maneje la misma, usando ademas unos registros especificos que nos brindan datos respecto de dicha excepcion o interrupcion. NO son los registros de uso cotidiano cuando programamos, pero aun asi son accesibles al programador. Por ej mepc sirve para saber que instruccion fue la que fallo (ya que nos devuelve la direccion de dicha instruccion). mcause nos sirve para identificar la causa del problema (en el bit mas significativo indica con 0 o 1 si fue una excepcion o una interrupcion, y en el resto, en base a una tabla, especifica la causa especifica).
+La instruccion que se utiliza para salir de una subrutina trap, que es la que maneja la excepcion o interrupcion, es mret la cual toma el valor que figura en mepc, es decir, la direccion de memoria de la instruccion que provoco el fallo. Como obivamente la ide ano es volver a esa misma instruccion porque nos va a provocar nuevamente la misma excepcion, lo que hacemos es sumar 4 a mepc o sumarle el valor que corresponda para saltar a otra instruccion, saliendo de la subrutina trap.
+
+mtvec es un registro que almacena la direccion de comienzo de un vector. Dicho vector es conocido como vector de interrupciones, y en cada posicion de esa vector va a haber una isntruccion. 
+Segun el modo dde operacion, se hace un diferente uso de dichas instrucciones, que no son otra cosa que lo que va a hacer el CPU al momento de producirse una excepcion o interrupcion + luego lo que establezca el programador.
+Con modo directo, toda excepcion o interrupcion es manejada por mtvec en pos 0 (la isntruccion que esta en esa posicion).
+Con modo vectorizado, las excepciones son manejadas por mtvec pos 0, pero las interrupciones seran manejadas por pos mcause (nro de causa) * 4.
+
+RISC-V soporta tres niveles de privilegio (usuario -> para los programas, supervisor -> para sistema operativo, maquina -> para el manejo directo del hardware). En la materia usariamos el nivel maquina.
+
+En esp32, el vector del que hablabamos antes tiene por ej en la pos 0 un salto a una instruccion con la etiqueta panic_handler, y en pos 1 a interrupt_handler.
+En el caso de panic_handler, lo que hace esta en primer lugar es llamar a una macro llamada save_general_regs la cual lo que hace es guardar cada uno de los registros (los que usamos siempre) y los almacena en el stack pointer para tener el estado de cada registro y no perderlo antes de hacer el tratamiento de la excepcion. Luego, al final, tiene lo contrario, que es restaurar los valores de los registros con la macro restore_general_regs.
+En interrupt_handler pasa lo mismo, y ademas tiene una intruccion que es global_interrupt_handler que maneja un vector con instrucciones que manejan cada tipo de interrupcion que se haya producido.
+
+Existen tres tipos de interrupciones: de software (que no las vemos en esta materia), timer (el timer es basicamente un contador), o externas (producidas por ej por un periferico de E/S).
+Las interrupciones de timer lo que hacen es usar un comparador con un valor fijo, y cada vez que el timer o contador llega a ese valor y se verifica en la comparacion, produce una interrupcion. Otra manera de producir interrupciones con timer es cada vez que este contador produce overflow.
+
+
+
+
