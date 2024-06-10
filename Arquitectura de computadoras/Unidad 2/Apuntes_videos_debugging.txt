@@ -18,7 +18,7 @@ En esp32, el vector del que hablabamos antes tiene por ej en la pos 0 un salto a
 En el caso de panic_handler, lo que hace esta en primer lugar es llamar a una macro llamada save_general_regs la cual lo que hace es guardar cada uno de los registros (los que usamos siempre) y los almacena en el stack pointer para tener el estado de cada registro y no perderlo antes de hacer el tratamiento de la excepcion. Luego, al final, tiene lo contrario, que es restaurar los valores de los registros con la macro restore_general_regs.
 En interrupt_handler pasa lo mismo, y ademas tiene una intruccion que es global_interrupt_handler que maneja un vector con instrucciones que manejan cada tipo de interrupcion que se haya producido.
 
-Existen tres tipos de interrupciones: de software (que no las vemos en esta materia), timer (el timer es basicamente un contador), o externas (producidas por ej por un periferico de E/S).
+Existen tres tipos de interrupciones: de software (que no las vemos en esta materia), timer (el timer es basicamente un contador, que puede incrementar o decrementar), o externas (producidas por ej por un periferico de E/S).
 Las interrupciones de timer lo que hacen es usar un comparador con un valor fijo, y cada vez que el timer o contador llega a ese valor y se verifica en la comparacion, produce una interrupcion. Otra manera de producir interrupciones con timer es cada vez que este contador produce overflow.
 
 

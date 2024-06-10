@@ -1,0 +1,55 @@
+Unidad 2.3: Comunicaciones
+
+Para comunicaciones en serie, es decir, comunicaciones en las cuales los datos o los bits se transmiten por una linea o cable uno detras del otro, se utiliza el concepto de baudio.
+Un baudio es una unidad de medida que indica la velocidad de transmision en una comunicacion serie. Representa la cantidad de bits que se trnamsiten por segundo, y se conoce tambien como "baud rate". Es asi que 9600 baudios, serian 9600 bits por segundo.
+El Tbit es el tiempo dentro de un segundo que corresponde a un bit. 
+Por ej: Tbit = 1seg / 9600 baudios (o bauds) = 0,000104167 segundos = 104, 167 microsegundos por bit
+
+1 seg = 1.000.000 microsegundos 
+
+
+***** UART *****
+Universal Asynchronous Receiver/Transmitter (UART) es un componente de hardware que facilita la comunicacion en serie en una computadora u otro dispositivo electronico. Es un intermediario entre el procesador y los dispositivos externos que usan una interfaz en serie. 
+Lo que hace es convertir los datos paralelos del procesador (esto es, los bits que se reciben en forma paralela a traves de los buses), en una secuencia de bits en serie, es decir, un bit detras del otro en lugar de uno "al lado" del otro en forma paralela, para su transmision, y lo mismo hace cuando recibe los bits externamente en serie y los debe convertir de nuevo en bits paralelos para enviarlos al procesador.
+Al ser asincronico, no existe señal de clock o de sincronismo para que cuando el transmisor envia datos sincronicamente el receptor este preparado al mismo tiempo para recibirlos. Esta comunicacion entonces se establece o se lleva a cabo de otra manera, fuera de lo que seria una señal de clock.
+En primer lugar, cuando no se estan transmitiendo datos en la linea de transmision (que seria el cable por donde circularian los bits en serie), se encuentra en estado de reposo o "idle", y en este caso se encuentra en 1.
+Cuando se comienzan a transmitir los datos, por cada byte se transmite un bit de "start" o inicio para avisar al receptor que se prepare para recibir datos. Dicho bit esta en 0.
+Luego vienen los bits de datos, que contienen la informacion en si, los cuales pueden configurarse en 7 u 8 bits.
+Finalmente, viene el parity bit (o bit de paridad, el cual es opcional, puede estar o no), y el bit de stop.
+El tema es, una vez que se recibe el bit de start o inicio, en que momento sabe el receptor que dicho bit ya concluye y comienzan a recibirse los bits que son propiamente de la informacion?
+Para ello, cuando la señal de reposo en 1 pasa a 0 que seria la del bit de start, se inicia un contador que tiene como frecuencia el baud rate (baudios, o cantidad de bits por segundo) multiplicado por 16. es decir, cada bit va a tener un ancho de 16 clock de esa señal. 
+El contador cuenta hasta 8 para asegurarse de estar en principio en el centro del bit de inicio. Y luego ira contando de a 16 par air ubicandose en el centro de cada bit, sabiendo asi cuándo inician los bits de datos propiamente (los bits de datos seran 7 u 8 segun el caso), hasta llegar al final con el o los dos bit de stop que siempre son 1.
+
+Tener en cuenta que para el bit de paridad:
+O -> ODD (impar en ingles, ODD tiene 3 letras, relacionarlo con impar)
+E -> EVEN (par en ingles, EVEN tiene 4 letras, relacionarlo con par)
+N -> No hay bit de paridad
+
+Ejemplo de formato:
+7O2 -> 1 bit de start (siempre esta, aunque implicito) + 7 bits de datos + 1 bit paridad impar + 2 bits stop = 11 bits por caracter
+
+(Ver  mas conceptos y calculos IMPORTANTES al respecto en ppt)
+
+bps -> bits de informacion (pura) por segundo. Informacion pura hace referencia al dato en si (no los bits de start, stop, o paridad, que son llamados bits de sincronismo o seguridad)
+
+El cociente entre bauds / bps nos da como resultado la eficiencia del canal
+
+***** SPI *****
+
+Serial Peripheral Interface, es un protocolo de comunicacion serial para transferir datos entre un master y uno o varios dispositivos esclavos.
+El bus cuenta con 4 lineas principales: 
+- SCLK (serial clock, desde el master a los slaves, para establecer los instantes en que se transmiten los datos), - MOSI (para transmitir datos desde el master al slave)
+- MISO (para transmitir datos desde el slave al master)
+- SS (slave select, es una linea por cada slave que este conectado al master)
+Todas las lineas son unidireccionales
+
+Ver en ppt explicacion de los pasos en que se da la comunicacion
+
+***** I2C *****
+
+Inter Integrated Circuit. Es un protocolo de comunicacion serial que permite la transferencia de datos entre dispositivos electronicos usando solo dos cables: una linea de datos (SDA - serial data) y una linea de reloj (SCL - serial clock)
+
+Ver en ppt explicacion de los pasos en que se da la comunicacion
+
+
+
