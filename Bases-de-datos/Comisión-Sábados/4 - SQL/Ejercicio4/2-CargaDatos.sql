@@ -55,7 +55,7 @@ INSERT INTO [dbo].[Trabaja]([nomPersona], [nomEmpresa], [salario], [feIngreso], 
 VALUES( 'Persona12','Sony',50000,GETDATE()-365,null);
 
 INSERT INTO [dbo].[Trabaja]([nomPersona], [nomEmpresa], [salario], [feIngreso], [feEgreso])
-VALUES( 'Persona12','Clarin',50000,GETDATE()-365,null);
+VALUES( 'Persona13','Clarin',50000,GETDATE()-365,null);
 
 
 
