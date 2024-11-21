@@ -1,0 +1,100 @@
+Ejemplo para entender casos usando teoria de conjunto y cociente:
+
+Ejemplo 1: hallar los proveedores que venden todos los articulos
+
+-- Forma 1 (mas sencilla):
+SELECT NroProv, count(distinct NroArt) 
+FROM Pedido 
+GROUP BY NroProv
+HAVING count(distinct NroArt) = (SELECT COUNT (*) FROM Articulo)
+
+
+-- Forma 2 (usando conciente y algebra de conjuntos):
+SELECT NroProv
+FROM Proveedor
+EXCEPT
+SELECT noCumplen.nroProv
+FROM
+(
+	SELECT p.NroProv, a.NroArt
+	FROM Proveedor p, Articulo a
+	EXCEPT 
+	SELECT pe.NroProv, pe.NroArt
+	FROM Pedido pe
+) as noCumplen
+
+
+desglocemos cada parte de esto:
+- producto cartesiano entre tabla Proveedor y Articulo:
+SELECT p.NroProv, a.NroArt
+FROM Proveedor p, Articulo a
+
+- a ese resultado le quito los proveedores que proveen articulos. Si hay un proveedor que provee todos, ese proveedor desaparece y 
+entonces me termino quedando con aquellos que NO proveen todos los articulos:
+SELECT p.NroProv, a.NroArt
+	FROM Proveedor p, Articulo a
+	EXCEPT 
+	SELECT pe.NroProv, pe.NroArt
+	FROM Pedido pe
+
+- finalmente, listo todos los proveedores, pero de esos elimino de la lista aquellos que NO proveen todos los articulos, obtenidos de la 
+subconsulta englobada en noCumplen:
+SELECT NroProv
+FROM Proveedor
+EXCEPT
+SELECT noCumplen.nroProv
+FROM
+(
+	SELECT p.NroProv, a.NroArt
+	FROM Proveedor p, Articulo a
+	EXCEPT 
+	SELECT pe.NroProv, pe.NroArt
+	FROM Pedido pe
+) as noCumplen
+
+
+
+-- Forma 3 (usando EXISTS):
+SELECT NroProv
+FROM Proveedor
+where NOT EXISTS
+(
+    SELECT 1
+    FROM Proveedor p, Articulo a
+    WHERE NOT EXISTS( 
+        SELECT 1
+        FROM Pedido pe
+        WHERE pe.NroProv = p.NroProv AND pe.NroArt = a.NroArt
+    ) 
+) 
+
+
+
+-----------------------------------------
+
+Ejemplo 2: enfoque similar pero con una condicion extra antes de hacer el producto cartesiano
+
+-- Hallar los proveedores que suministran todos los artículos cuyo precio es superior 
+-- al precio promedio de todos los art.
+
+SELECT NroProv
+FROM Proveedor
+EXCEPT
+SELECT noCumplen.nroProv
+FROM
+(
+	SELECT p.NroProv, a.NroArt
+	FROM Proveedor p, 
+	(
+		SELECT *
+		FROM Articulo 
+		WHERE PRECIO > (SELECT AVG(PRECIO) FROM Articulo)
+	) AS a
+	EXCEPT 
+	SELECT pe.NroProv, pe.NroArt
+	FROM Pedido pe
+) as noCumplen
+
+
+
+
